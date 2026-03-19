@@ -1,0 +1,27 @@
+{
+  "name": "Sales Invoice",
+  "module": "Accounts",
+  "fields": [
+    {"fieldname": "name", "fieldtype": "Data", "reqd": 1, "label": "ID"},
+    {"fieldname": "naming_series", "fieldtype": "Select", "options": "SINV-.YYYY.-", "reqd": 0},
+    {"fieldname": "customer", "fieldtype": "Link", "options": "Customer", "reqd": 1},
+    {"fieldname": "posting_date", "fieldtype": "Date", "reqd": 1},
+    {"fieldname": "due_date", "fieldtype": "Date", "reqd": 0},
+    {"fieldname": "grand_total", "fieldtype": "Currency", "reqd": 1},
+    {"fieldname": "outstanding_amount", "fieldtype": "Currency", "reqd": 0},
+    {"fieldname": "is_return", "fieldtype": "Check", "reqd": 0},
+    {"fieldname": "return_against", "fieldtype": "Link", "options": "Sales Invoice", "reqd": 0},
+    {"fieldname": "remarks", "fieldtype": "Text", "reqd": 0},
+    {"fieldname": "amended_from", "fieldtype": "Link", "options": "Sales Invoice", "reqd": 0},
+    {"fieldname": "docstatus", "fieldtype": "Int", "reqd": 0},
+    {"fieldname": "parent", "fieldtype": "Data", "reqd": 0},
+    {"fieldname": "parenttype", "fieldtype": "Data", "reqd": 0},
+    {"fieldname": "idx", "fieldtype": "Int", "reqd": 0},
+    {"fieldname": "creation", "fieldtype": "Datetime", "reqd": 0},
+    {"fieldname": "modified", "fieldtype": "Datetime", "reqd": 0},
+    {"fieldname": "modified_by", "fieldtype": "Data", "reqd": 0},
+    {"fieldname": "owner", "fieldtype": "Data", "reqd": 0},
+    {"fieldname": "section_break_1", "fieldtype": "Section Break"},
+    {"fieldname": "column_break_1", "fieldtype": "Column Break"}
+  ]
+}

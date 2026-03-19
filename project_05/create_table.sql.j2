@@ -1,0 +1,23 @@
+CREATE TABLE {{ table.name }} (
+{%- for col in table.columns %}
+    {{ col.name }} {{ col.data_type }}
+    {%- if col.get('primary_key') %} PRIMARY KEY{% endif %}
+    {%- if not col.nullable %} NOT NULL{% endif %}
+    {%- if col.get('unique') %} UNIQUE{% endif %}
+    {%- if col.get('default_value') %} DEFAULT {{ col.default_value }}{% endif %}
+    {%- if not loop.last or table.enforced_fks %},{% endif %}
+{%- endfor %}
+{%- for fk in table.enforced_fks %}
+    FOREIGN KEY ({{ fk.from_column }}) REFERENCES {{ fk.to_table }}({{ fk.to_column }}) ON DELETE {{ fk.on_delete }}
+    {%- if not loop.last %},{% endif %}
+{%- endfor %}
+);
+
+{% for fk in table.enforced_fks -%}
+CREATE INDEX idx_{{ table.name }}_{{ fk.from_column }} ON {{ table.name }}({{ fk.from_column }});
+{% endfor -%}
+
+{% for ref in table.logical_refs -%}
+CREATE INDEX idx_{{ table.name }}_{{ ref.from_column }} ON {{ table.name }}({{ ref.from_column }});
+COMMENT ON COLUMN {{ table.name }}.{{ ref.from_column }} IS '{{ ref.comment }}';
+{% endfor %}
