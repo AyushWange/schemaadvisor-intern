@@ -1,5 +1,5 @@
 # SchemaAdvisor: Intern Pre-Joining Implementation Guide
-**Completed by:** [Your Name]  
+**Completed by:** Ayush Wange 
 **Company:** Shivom Labs  
 **Duration:** Pre-joining preparation  
 **Language:** Python 3.10  
