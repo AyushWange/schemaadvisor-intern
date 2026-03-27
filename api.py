@@ -56,8 +56,7 @@ def root():
         }
     }
 
-# Mount the frontend directory to serve on /
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
 
 @app.get("/health")
 def health():
@@ -77,3 +76,6 @@ def generate_schema(req: SchemaRequest):
         )
 
     return result
+
+# Mount the frontend directory to serve on / (must be the LAST route defined)
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
