@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 1. SchemaAdvisor Backend & UI Serve
+  api:
+    build: .
+    container_name: schemaadvisor-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - NEO4J_URI=bolt://neo4j-db:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password
+    depends_on:
+      - neo4j-db
+      - postgres-db
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app/frontend
+
+  # 2. PostgreSQL DB for Project 7 execution/generation simulation
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: schemaadvisor-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: schema_db
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 3. Neo4j DB for Project 2 Graph execution simulation
+  neo4j-db:
+    image: neo4j:5
+    container_name: schemaadvisor-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password
+    ports:
+      - "7474:7474"   # Web interface
+      - "7687:7687"   # Bolt protocol
+    restart: unless-stopped
+    volumes:
+      - neo4jdata:/data
+
+volumes:
+  pgdata:
+  neo4jdata:

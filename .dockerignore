@@ -1,0 +1,19 @@
+.git/
+.gitignore
+.env
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+tests/
+venv/
+env/
+.devcontainer/
+.vscode/
+
+# Local logs or dumps
+*.log
+*.sqlite3
+test_output.txt
+fails.txt
+fails_utf8.txt
