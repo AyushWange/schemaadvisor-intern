@@ -42,7 +42,9 @@ class SchemaResponse(BaseModel):
     explainability: list[ExplainabilityRow]
     validation:     dict
 
-@app.get("/")
+from fastapi.staticfiles import StaticFiles
+
+@app.get("/api")
 def root():
     return {
         "service": "SchemaAdvisor",
@@ -50,8 +52,12 @@ def root():
         "endpoints": {
             "POST /schema": "Generate a PostgreSQL schema from natural language",
             "GET  /health": "Health check",
+            "GET  /api": "API Entry point",
         }
     }
+
+# Mount the frontend directory to serve on /
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 @app.get("/health")
 def health():

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchemaAdvisor AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <main class="container">
+        <header class="header">
+            <h1 class="gradient-text">SchemaAdvisor</h1>
+            <p class="subtitle">Natural Language to Validated PostgreSQL Schema</p>
+        </header>
+
+        <section class="glass-panel input-section">
+            <label for="prompt-input" class="visually-hidden">Describe your database requirements</label>
+            <textarea id="prompt-input" placeholder="e.g., I need an online store with product catalog, shopping cart, and invoicing..." rows="3"></textarea>
+            <div class="action-bar">
+                <button id="generate-btn" class="primary-btn">
+                    <span class="btn-text">Generate Schema</span>
+                    <span class="btn-loader hidden"></span>
+                </button>
+            </div>
+            <div id="error-message" class="error-msg hidden"></div>
+        </section>
+
+        <section id="results-section" class="results-section hidden">
+            <div class="results-grid">
+                <!-- Generated SQL -->
+                <div class="glass-panel code-panel">
+                    <div class="panel-header">
+                        <h2>Generated PostgreSQL</h2>
+                        <span id="validation-badge" class="badge">Validating...</span>
+                    </div>
+                    <div class="code-wrapper">
+                        <pre><code id="sql-output" class="language-sql"></code></pre>
+                    </div>
+                </div>
+
+                <!-- Explainability Report -->
+                <div class="glass-panel report-panel">
+                    <div class="panel-header">
+                        <h2>AI Explainability</h2>
+                        <span class="badge badge-info">Concept Trace</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="explain-table">
+                            <thead>
+                                <tr>
+                                    <th>Table Name</th>
+                                    <th>Tier</th>
+                                    <th>Confidence</th>
+                                    <th>Triggered By</th>
+                                </tr>
+                            </thead>
+                            <tbody id="explain-tbody">
+                                <!-- Rows injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pipeline-meta">
+                        <h3>Pipeline Meta</h3>
+                        <p><strong>Creation Order:</strong> <span id="creation-order-val"></span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
