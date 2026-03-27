@@ -1,0 +1,32 @@
+﻿
+======================================================================
+INPUT: Online store with invoicing
+======================================================================
+
+  Stage 1: Concept Extraction
+  [LLM] Calling Claude API...
+  [LLM] API call failed (Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CZNhGigi7eukCs8pJ2NbZ'}), falling back to mock.
+  No concepts extracted. Cannot generate schema.
+    Unmatched: Online store with invoicing
+python : 
+G:\Zcons\project_12\pipeline.py:575: 
+PydanticDeprecatedSince20: The `dict` 
+method is deprecated; use `model_dump` 
+instead. Deprecated in Pydantic V2.0 to 
+be removed in V3.0. See Pydantic V2 
+Migration Guide at https://errors.pydantic
+.dev/2.12/migration/
+At line:1 char:1
++ python -u project_12/pipeline.py 
+"Online store with invoicing" 2>&1 | ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifie 
+   d: (G:\Zcons\projec...2.12/migration/  
+  :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeComma 
+   ndError
+ 
+  return {"error": "No concepts 
+extracted", "unmatched": [u.dict() for u 
+in extraction.unmatched]}

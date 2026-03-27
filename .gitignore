@@ -1,0 +1,24 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Output
+*.txt
+!mock_test.txt
+!mock_direct.txt
+!requirements.txt
+
+# Docs / Specs
+*.pdf

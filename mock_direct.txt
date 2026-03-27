@@ -1,0 +1,1 @@
+﻿{'concepts': [], 'decisions': [], 'unmatched': [{'raw_text': 'Online store with invoicing', 'category': 'potential_table'}]}
