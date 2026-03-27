@@ -42,7 +42,8 @@ tables = [
 ]
 
 def generate_ddl(tables):
-    env      = Environment(loader=FileSystemLoader("."))
+    import os
+    env      = Environment(loader=FileSystemLoader(os.path.dirname(__file__)))
     template = env.get_template("create_table.sql.j2")
     parts    = ["BEGIN;", ""]
 
