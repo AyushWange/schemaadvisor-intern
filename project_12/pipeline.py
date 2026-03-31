@@ -67,6 +67,30 @@ CONCEPT_TABLES = {
         {"name": "hsn_codes",      "tier": "required"},
         {"name": "tax_entries",    "tier": "recommended"},
     ],
+    # ── 5 new concepts (spec §4.1.1) ─────────────────────────────────────────
+    "supplier_management": [
+        {"name": "suppliers",       "tier": "required"},
+        {"name": "supplier_groups", "tier": "recommended"},
+        {"name": "purchase_orders", "tier": "recommended"},
+    ],
+    "multi_currency": [
+        {"name": "currencies",       "tier": "required"},
+        {"name": "exchange_rates",   "tier": "required"},
+        {"name": "currency_ledger",  "tier": "suggested"},
+    ],
+    "file_attachments": [
+        {"name": "attachments",    "tier": "required"},
+        {"name": "storage_buckets","tier": "recommended"},
+    ],
+    "notifications": [
+        {"name": "notifications",         "tier": "required"},
+        {"name": "notification_channels", "tier": "recommended"},
+    ],
+    "reporting_analytics": [
+        {"name": "reports",       "tier": "required"},
+        {"name": "dashboards",    "tier": "recommended"},
+        {"name": "report_filters","tier": "suggested"},
+    ],
 }
 
 CONCEPT_DEPS = {
@@ -80,28 +104,45 @@ CONCEPT_DEPS = {
     "user_authentication":  [],
     "employee_management":  [],
     "project_tracking":     [],
+    # new
+    "supplier_management":  [],
+    "multi_currency":       [],
+    "file_attachments":     [],
+    "notifications":        [],
+    "reporting_analytics":  [],
 }
 
 TABLE_DEPS = {
-    "orders":        ["customers"],
-    "order_items":   ["orders", "products"],
-    "invoices":      ["customers"],
-    "invoice_items": ["invoices"],
-    "tax_entries":   ["invoices"],
-    "shopping_cart": ["customers"],
-    "addresses":     ["customers"],
-    "contacts":      ["customers"],
-    "attributes":    ["products"],
-    "payments":      ["orders"],
-    "refunds":       ["payments"],
-    "sessions":      ["users"],
-    "stock_entries": ["warehouses", "products"],
-    "stock_ledger":  ["warehouses", "products"],
-    "tasks":         ["projects"],
-    "time_logs":     ["tasks", "employees"],
-    "milestones":    ["projects"],
-    "designations":  ["departments"],
-    "employees":     ["departments"],
+    "orders":                  ["customers"],
+    "order_items":             ["orders", "products"],
+    "invoices":                ["customers"],
+    "invoice_items":           ["invoices"],
+    "tax_entries":             ["invoices"],
+    "shopping_cart":           ["customers"],
+    "addresses":               ["customers"],
+    "contacts":                ["customers"],
+    "attributes":              ["products"],
+    "payments":                ["orders"],
+    "refunds":                 ["payments"],
+    "sessions":                ["users"],
+    "stock_entries":           ["warehouses", "products"],
+    "stock_ledger":            ["warehouses", "products"],
+    "tasks":                   ["projects"],
+    "time_logs":               ["tasks", "employees"],
+    "milestones":              ["projects"],
+    "designations":            ["departments"],
+    "employees":               ["departments"],
+    # new
+    "purchase_orders":         ["suppliers"],
+    "supplier_groups":         [],
+    "exchange_rates":          ["currencies"],
+    "currency_ledger":         ["currencies"],
+    "storage_buckets":         [],
+    "attachments":             [],
+    "notification_channels":   [],
+    "notifications":           [],
+    "report_filters":          ["reports"],
+    "dashboards":              [],
 }
 
 TIER_RANK   = {"required": 3, "recommended": 2, "suggested": 1}
@@ -279,6 +320,77 @@ BASE_COLUMNS = {
         {"name": "code",        "data_type": "VARCHAR(20)",  "primary_key": False, "nullable": False},
         {"name": "description", "data_type": "TEXT",        "primary_key": False, "nullable": True},
     ],
+    # ── new concept base columns ──────────────────────────────────────────────
+    "suppliers": [
+        {"name": "id",           "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "name",         "data_type": "VARCHAR(255)", "primary_key": False, "nullable": False},
+        {"name": "email",        "data_type": "VARCHAR(255)", "primary_key": False, "nullable": True},
+        {"name": "payment_terms","data_type": "VARCHAR(100)", "primary_key": False, "nullable": True},
+    ],
+    "supplier_groups": [
+        {"name": "id",   "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "name", "data_type": "VARCHAR(255)", "primary_key": False, "nullable": False},
+    ],
+    "purchase_orders": [
+        {"name": "id",          "data_type": "BIGSERIAL",     "primary_key": True,  "nullable": False},
+        {"name": "supplier_id", "data_type": "BIGINT",        "primary_key": False, "nullable": False},
+        {"name": "total",       "data_type": "DECIMAL(18,6)", "primary_key": False, "nullable": False},
+        {"name": "status",      "data_type": "VARCHAR(50)",   "primary_key": False, "nullable": False, "default_value": "'draft'"},
+    ],
+    "currencies": [
+        {"name": "id",     "data_type": "BIGSERIAL",  "primary_key": True,  "nullable": False},
+        {"name": "code",   "data_type": "VARCHAR(3)",  "primary_key": False, "nullable": False, "unique": True},
+        {"name": "name",   "data_type": "VARCHAR(50)", "primary_key": False, "nullable": False},
+        {"name": "symbol", "data_type": "VARCHAR(5)",  "primary_key": False, "nullable": True},
+    ],
+    "exchange_rates": [
+        {"name": "id",            "data_type": "BIGSERIAL",     "primary_key": True,  "nullable": False},
+        {"name": "currency_id",   "data_type": "BIGINT",        "primary_key": False, "nullable": False},
+        {"name": "rate",          "data_type": "DECIMAL(18,6)", "primary_key": False, "nullable": False},
+        {"name": "effective_date","data_type": "DATE",          "primary_key": False, "nullable": False},
+    ],
+    "currency_ledger": [
+        {"name": "id",          "data_type": "BIGSERIAL",     "primary_key": True,  "nullable": False},
+        {"name": "currency_id", "data_type": "BIGINT",        "primary_key": False, "nullable": False},
+        {"name": "amount",      "data_type": "DECIMAL(18,6)", "primary_key": False, "nullable": False},
+    ],
+    "attachments": [
+        {"name": "id",          "data_type": "BIGSERIAL",    "primary_key": True,  "nullable": False},
+        {"name": "filename",    "data_type": "VARCHAR(255)", "primary_key": False, "nullable": False},
+        {"name": "file_url",    "data_type": "TEXT",         "primary_key": False, "nullable": False},
+        {"name": "mime_type",   "data_type": "VARCHAR(100)", "primary_key": False, "nullable": True},
+        {"name": "size_bytes",  "data_type": "BIGINT",       "primary_key": False, "nullable": True},
+    ],
+    "storage_buckets": [
+        {"name": "id",         "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "name",       "data_type": "VARCHAR(100)","primary_key": False, "nullable": False},
+        {"name": "provider",   "data_type": "VARCHAR(50)", "primary_key": False, "nullable": True},
+    ],
+    "notifications": [
+        {"name": "id",         "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "title",      "data_type": "VARCHAR(255)","primary_key": False, "nullable": False},
+        {"name": "body",       "data_type": "TEXT",        "primary_key": False, "nullable": True},
+        {"name": "is_read",    "data_type": "BOOLEAN",     "primary_key": False, "nullable": False, "default_value": "false"},
+    ],
+    "notification_channels": [
+        {"name": "id",   "data_type": "BIGSERIAL",  "primary_key": True,  "nullable": False},
+        {"name": "name", "data_type": "VARCHAR(50)", "primary_key": False, "nullable": False},
+        {"name": "type", "data_type": "VARCHAR(50)", "primary_key": False, "nullable": False},
+    ],
+    "reports": [
+        {"name": "id",          "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "name",        "data_type": "VARCHAR(255)","primary_key": False, "nullable": False},
+        {"name": "query",       "data_type": "TEXT",        "primary_key": False, "nullable": True},
+    ],
+    "dashboards": [
+        {"name": "id",   "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "name", "data_type": "VARCHAR(255)", "primary_key": False, "nullable": False},
+    ],
+    "report_filters": [
+        {"name": "id",         "data_type": "BIGSERIAL",   "primary_key": True,  "nullable": False},
+        {"name": "report_id",  "data_type": "BIGINT",      "primary_key": False, "nullable": False},
+        {"name": "field_name", "data_type": "VARCHAR(100)","primary_key": False, "nullable": False},
+    ],
 }
 
 ENFORCED_FKS = {
@@ -311,20 +423,52 @@ ENFORCED_FKS = {
         {"from_column": "warehouse_id","to_table": "warehouses","to_column": "id", "on_delete": "CASCADE"},
         {"from_column": "product_id",  "to_table": "products",  "to_column": "id", "on_delete": "CASCADE"},
     ],
+    # new concept FKs
+    "purchase_orders": [{"from_column": "supplier_id",  "to_table": "suppliers",  "to_column": "id", "on_delete": "CASCADE"}],
+    "exchange_rates":  [{"from_column": "currency_id",  "to_table": "currencies", "to_column": "id", "on_delete": "CASCADE"}],
+    "currency_ledger": [{"from_column": "currency_id",  "to_table": "currencies", "to_column": "id", "on_delete": "CASCADE"}],
+    "report_filters":  [{"from_column": "report_id",    "to_table": "reports",    "to_column": "id", "on_delete": "CASCADE"}],
 }
 
-# ── Patterns ───────────────────────────────────────────────────────────────────
-
+# ── Patterns (applied to all tables) ──────────────────────────────────────────
+# audit_policy=full_audit: all 4 columns (spec §4.1.2)
 PATTERNS = {
     "audit_columns": [
         {"name": "created_at", "data_type": "TIMESTAMP",    "nullable": False, "default_value": "NOW()"},
         {"name": "updated_at", "data_type": "TIMESTAMP",    "nullable": True},
         {"name": "created_by", "data_type": "VARCHAR(140)", "nullable": True},
+        {"name": "updated_by", "data_type": "VARCHAR(140)", "nullable": True},  # spec §4.1.2
     ],
     "soft_delete": [
         {"name": "is_deleted", "data_type": "BOOLEAN",   "nullable": False, "default_value": "false"},
         {"name": "deleted_at", "data_type": "TIMESTAMP", "nullable": True},
     ],
+    # temporal_strategy=versioned (spec §4.1.2)
+    "temporal_version": [
+        {"name": "valid_from", "data_type": "TIMESTAMP", "nullable": False, "default_value": "NOW()"},
+        {"name": "valid_to",   "data_type": "TIMESTAMP", "nullable": True},
+        {"name": "version",    "data_type": "INTEGER",   "nullable": False, "default_value": "1"},
+    ],
+}
+
+# System table for multi_tenant pattern (injected only when tenancy_model=multi_tenant)
+SYSTEM_TABLES = {
+    "tenants": {
+        "name": "tenants",
+        "tier": "required",
+        "triggered_by": ["multi_tenant pattern"],
+        "patterns_applied": [],
+        "inclusion_confidence": 1.0,
+        "columns": [
+            {"name": "id",         "data_type": "BIGSERIAL",    "primary_key": True,  "nullable": False},
+            {"name": "name",       "data_type": "VARCHAR(255)", "primary_key": False, "nullable": False},
+            {"name": "slug",       "data_type": "VARCHAR(100)", "primary_key": False, "nullable": False, "unique": True},
+            {"name": "is_active",  "data_type": "BOOLEAN",     "primary_key": False, "nullable": False, "default_value": "true"},
+            {"name": "created_at", "data_type": "TIMESTAMP",   "primary_key": False, "nullable": False, "default_value": "NOW()"},
+        ],
+        "enforced_fks": [],
+        "logical_refs": [],
+    },
 }
 
 # ── Stage implementations ──────────────────────────────────────────────────────

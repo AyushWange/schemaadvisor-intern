@@ -10,11 +10,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('explain-tbody');
     const badge = document.getElementById('validation-badge');
     const creationOrderVal = document.getElementById('creation-order-val');
+    const copySqlBtn = document.getElementById('copy-sql-btn');
 
     // Auto-resize textarea
     inputField.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Copy SQL to clipboard
+    copySqlBtn.addEventListener('click', async () => {
+        const sql = sqlOutput.textContent;
+        if (!sql) return;
+        try {
+            await navigator.clipboard.writeText(sql);
+            const copyText = copySqlBtn.querySelector('.copy-text');
+            const copyIcon = copySqlBtn.querySelector('.copy-icon');
+            copyIcon.textContent = '✓';
+            copyText.textContent = 'Copied!';
+            copySqlBtn.classList.add('copy-btn--success');
+            setTimeout(() => {
+                copyIcon.textContent = '⍘';
+                copyText.textContent = 'Copy';
+                copySqlBtn.classList.remove('copy-btn--success');
+            }, 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+        }
     });
 
     generateBtn.addEventListener('click', async () => {
@@ -57,6 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResults(data) {
         // 1. Render SQL
         sqlOutput.textContent = data.ddl;
+        // Apply Prism.js syntax highlighting
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightElement(sqlOutput);
+        }
 
         // 2. Render Validation Badge
         badge.className = 'badge';

@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchemaAdvisor AI</title>
+    <title>SchemaAdvisor AI — Natural Language to PostgreSQL</title>
+    <meta name="description" content="SchemaAdvisor converts natural language business requirements into validated PostgreSQL database schemas with AI-powered explainability.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Prism.js SQL Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,6 +18,11 @@
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
+
+    <nav class="top-nav">
+        <span class="nav-brand">⚡ SchemaAdvisor</span>
+        <a href="/admin.html" class="nav-link" id="admin-nav-link">🛠 Admin Panel</a>
+    </nav>
 
     <main class="container">
         <header class="header">
@@ -40,7 +48,13 @@
                 <div class="glass-panel code-panel">
                     <div class="panel-header">
                         <h2>Generated PostgreSQL</h2>
-                        <span id="validation-badge" class="badge">Validating...</span>
+                        <div class="panel-header-right">
+                            <button id="copy-sql-btn" class="copy-btn" title="Copy SQL to clipboard">
+                                <span class="copy-icon">⎘</span>
+                                <span class="copy-text">Copy</span>
+                            </button>
+                            <span id="validation-badge" class="badge">Validating...</span>
+                        </div>
                     </div>
                     <div class="code-wrapper">
                         <pre><code id="sql-output" class="language-sql"></code></pre>
@@ -78,6 +92,8 @@
         </section>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

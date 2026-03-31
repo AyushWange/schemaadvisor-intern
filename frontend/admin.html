@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — SchemaAdvisor</title>
+    <meta name="description" content="SchemaAdvisor Admin Panel — manage concept registry, review candidates, and configure the LLM extraction guardrails.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <nav class="top-nav">
+        <span class="nav-brand">⚡ SchemaAdvisor</span>
+        <a href="/index.html" class="nav-link">← Back to App</a>
+    </nav>
+
+    <main class="container">
+        <header class="header">
+            <h1 class="gradient-text">Admin Panel</h1>
+            <p class="subtitle">Manage concept registry &amp; review candidate concepts</p>
+        </header>
+
+        <!-- Stats Row -->
+        <div class="stats-row" id="stats-row">
+            <div class="stat-card glass-panel">
+                <span class="stat-number" id="stat-active">—</span>
+                <span class="stat-label">Active Concepts</span>
+            </div>
+            <div class="stat-card glass-panel">
+                <span class="stat-number stat-red" id="stat-candidates">—</span>
+                <span class="stat-label">Pending Candidates</span>
+            </div>
+            <div class="stat-card glass-panel">
+                <span class="stat-number stat-muted" id="stat-rejected">—</span>
+                <span class="stat-label">Rejected</span>
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Active Concepts -->
+            <section class="glass-panel admin-section" id="concepts-section">
+                <div class="panel-header">
+                    <h2>Active Concept Registry</h2>
+                    <span class="badge badge-success" id="active-count-badge">Loading…</span>
+                </div>
+                <div id="concepts-list" class="concept-list">
+                    <div class="loading-row">Loading concepts…</div>
+                </div>
+            </section>
+
+            <!-- Right column -->
+            <div class="admin-right">
+                <!-- Add New Concept -->
+                <section class="glass-panel admin-section">
+                    <div class="panel-header">
+                        <h2>Propose New Concept</h2>
+                        <span class="badge badge-info">Add</span>
+                    </div>
+                    <form id="add-concept-form" class="add-form" autocomplete="off">
+                        <div class="form-group">
+                            <label for="new-concept-name">Concept Key</label>
+                            <input type="text" id="new-concept-name" placeholder="e.g. subscription_billing" required
+                                   pattern="[a-z_]+" title="Lowercase letters and underscores only">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-concept-desc">Description</label>
+                            <textarea id="new-concept-desc" rows="3"
+                                placeholder="e.g. Subscription plans, recurring invoices, trial periods"></textarea>
+                        </div>
+                        <div id="add-error" class="error-msg hidden"></div>
+                        <div id="add-success" class="success-msg hidden"></div>
+                        <button type="submit" class="primary-btn" id="add-btn">
+                            <span class="btn-text">Propose Concept</span>
+                            <span class="btn-loader hidden"></span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Candidate Concepts (Unmatched / Rejected) -->
+                <section class="glass-panel admin-section" id="candidates-section">
+                    <div class="panel-header">
+                        <h2>Candidate Concepts</h2>
+                        <span class="badge badge-error" id="candidate-count-badge">Loading…</span>
+                    </div>
+                    <p class="section-hint">These are terms the LLM flagged but could not map to any active concept. Review and either <strong>approve</strong> (adds to registry) or <strong>reject</strong> (removes from queue).</p>
+                    <div id="candidates-list" class="candidate-list">
+                        <div class="loading-row">Loading candidates…</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>

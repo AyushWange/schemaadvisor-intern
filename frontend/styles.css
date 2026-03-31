@@ -59,11 +59,55 @@ body {
     100% { transform: translate(100px, 50px) scale(1.2); }
 }
 
+/* ── Top Nav ──────────────────────────────────────────────── */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    background: rgba(5, 5, 5, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.nav-brand {
+    font-weight: 600;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #818cf8, #d8b4fe);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.3px;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.08);
+}
+
 /* Layout */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 3rem 1.5rem;
+    padding: 5rem 1.5rem 3rem; /* top offset for fixed nav */
 }
 
 .header {
@@ -76,6 +120,7 @@ body {
     font-weight: 700;
     background: linear-gradient(135deg, #818cf8, #d8b4fe);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
@@ -226,6 +271,13 @@ textarea::placeholder {
     font-weight: 500;
 }
 
+/* ── Panel Header Right group ─────────────────────────────── */
+.panel-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .badge {
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
@@ -316,4 +368,52 @@ code {
     color: #a855f7;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
+}
+
+/* ── Copy SQL Button ──────────────────────────────────────── */
+.copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.copy-btn:hover {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: var(--text-primary);
+}
+
+.copy-btn--success {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #34d399 !important;
+}
+
+.copy-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* ── Prism override — match dark theme ────────────────────── */
+pre[class*="language-"] {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+}
+
+code[class*="language-"] {
+    background: transparent !important;
+    text-shadow: none !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.88rem !important;
 }
