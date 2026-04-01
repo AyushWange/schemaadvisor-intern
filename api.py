@@ -14,6 +14,18 @@ from pydantic import BaseModel
 
 from project_12.pipeline import run_pipeline
 from project_06.extractor import CONCEPTS as _BASE_CONCEPTS
+from project_02.graph_loader    import load_full_graph
+from project_02.candidate_logger import log_candidates, get_all_candidates
+
+# ── Load knowledge graph into Neo4j on startup (non-blocking) ─────────────────
+import threading
+_neo4j_ready = False
+
+def _startup_load():
+    global _neo4j_ready
+    _neo4j_ready = load_full_graph(clear=True, verbose=True)
+
+threading.Thread(target=_startup_load, daemon=True).start()
 
 app = FastAPI(
     title="SchemaAdvisor API",
@@ -78,7 +90,11 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "llm_ready": bool(os.environ.get("ANTHROPIC_API_KEY"))}
+    return {
+        "status":       "ok",
+        "llm_ready":    bool(os.environ.get("ANTHROPIC_API_KEY")),
+        "neo4j_ready":  _neo4j_ready,
+    }
 
 @app.post("/schema", response_model=SchemaResponse)
 def generate_schema(req: SchemaRequest):
@@ -88,7 +104,7 @@ def generate_schema(req: SchemaRequest):
     result = run_pipeline(req.requirements, verbose=False)
 
     if "error" in result:
-        # Auto-queue any unmatched items as candidates for admin review
+        # Queue unmatched items in-memory for admin review
         for item in result.get("unmatched", []):
             raw = item.get("raw_text", "")
             if raw and raw not in _rejected and not any(c["raw_text"] == raw for c in _candidates):
@@ -97,6 +113,25 @@ def generate_schema(req: SchemaRequest):
             status_code=422,
             detail=f"Could not extract concepts: {result['error']}"
         )
+
+    # ── Log unmatched items as CandidateConcept nodes in Neo4j ────────────────
+    unmatched_objs = result.get("unmatched", [])
+    if unmatched_objs:
+        # Convert dict list to objects with attributes for the logger
+        class _Item:
+            def __init__(self, d):
+                self.raw_text        = d.get("raw_text", "")
+                self.category        = d.get("category", "potential_table")
+                self.nearest_concept = d.get("nearest_concept")
+        items = [_Item(u) for u in unmatched_objs]
+        logged = log_candidates(items, source_scenario=req.requirements[:120])
+        if logged:
+            print(f"  [Candidates] {logged} items logged to Neo4j")
+        # Also keep in-memory queue for admin UI
+        for u in unmatched_objs:
+            raw = u.get("raw_text", "")
+            if raw and raw not in _rejected and not any(c["raw_text"] == raw for c in _candidates):
+                _candidates.append(u)
 
     return result
 
@@ -122,9 +157,19 @@ def admin_remove_concept(concept_key: str):
     del _concept_registry[concept_key]
     return {"removed": concept_key}
 
-# ── Admin: Candidate Queue ─────────────────────────────────────────────────────
+# ── Admin: Candidate Queue (Neo4j-backed, falls back to in-memory) ──────────
 @app.get("/admin/candidates")
 def admin_list_candidates():
+    # Try Neo4j first
+    neo4j_items = get_all_candidates()
+    if neo4j_items:
+        return {"candidates": [
+            {"raw_text": c["raw_text"], "category": "potential_table",
+             "nearest_concept": c.get("nearest_concept"),
+             "frequency": c.get("frequency", 1)}
+            for c in neo4j_items
+        ]}
+    # Fallback: in-memory queue
     return {"candidates": _candidates}
 
 @app.post("/admin/candidates/reject")
