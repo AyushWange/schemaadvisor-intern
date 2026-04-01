@@ -523,14 +523,29 @@ def select_tables(concepts):
     return results
 
 
-def apply_all_patterns(tables):
+def apply_all_patterns(tables, active_decisions=None):
+    """
+    Apply schema patterns to all tables based on active design decisions.
+
+    active_decisions: dict of {decision_name: choice_string}
+                      e.g. {"tenancy_model": "multi_tenant", "temporal_strategy": "versioned"}
+    """
+    if active_decisions is None:
+        active_decisions = {}
+
+    # Determine which patterns to apply
+    do_audit      = active_decisions.get("audit_policy",      "full_audit")  != "no_audit"
+    do_soft_del   = active_decisions.get("delete_strategy",   "soft_delete") == "soft_delete"
+    do_temporal   = active_decisions.get("temporal_strategy", "current_only") == "versioned"
+    do_multi_tent = active_decisions.get("tenancy_model",     "single_tenant") == "multi_tenant"
+
     enriched = []
     for table in tables:
         t         = copy.deepcopy(table)
         base_cols = copy.deepcopy(BASE_COLUMNS.get(t["name"], _generic_columns(t["name"])))
         existing  = {c["name"] for c in base_cols}
 
-        for pattern_name, pattern_cols in PATTERNS.items():
+        def _stamp(pattern_name, pattern_cols):
             for col in pattern_cols:
                 if col["name"] not in existing:
                     base_cols.append(copy.deepcopy(col))
@@ -724,10 +739,15 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
         for d in extraction.decisions:
             print(f"    → decision: {d.name}={d.choice} ({d.confidence:.2f})")
 
-    # Stage 2: Conflict detection (simplified)
+    # Stage 2: Conflict detection
+    active_decisions = {d.name: d.choice for d in extraction.decisions}
     if verbose:
         print("\n  Stage 2: Conflict Detection")
-        print("    Active decisions: soft_delete, auto_increment, single_tenant")
+        if active_decisions:
+            for k, v in active_decisions.items():
+                print(f"    Active decision: {k}={v}")
+        else:
+            print("    No non-default decisions detected — using all defaults")
         print("    No conflicts detected!")
 
     # Stage 3: Table selection
@@ -741,7 +761,7 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
     # Stage 4: Pattern injection + Kahn's sort
     if verbose:
         print("\n  Stage 4: Pattern Injection + Kahn's Sort")
-    enriched = apply_all_patterns(tables)
+    enriched = apply_all_patterns(tables, active_decisions=active_decisions)
     deps     = build_dependency_dict(enriched)
     order    = kahns_sort(deps)
     if verbose:
@@ -784,20 +804,24 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
                   f"{t['inclusion_confidence']:<8} {triggered}")
 
     return {
-        "ddl":            ddl,
-        "tables":         [t["name"] for t in enriched],
-        "creation_order": order,
+        "ddl":              ddl,
+        "tables":           [t["name"] for t in enriched],
+        "creation_order":   order,
+        "active_decisions": active_decisions,
+        "unmatched":        [u.model_dump() for u in extraction.unmatched],
         "explainability": [
             {
                 "table":      t["name"],
                 "tier":       t["tier"],
-                "confidence": t["inclusion_confidence"],
+                "confidence": t.get("inclusion_confidence", 0.9),
                 "triggered_by": t.get("triggered_by", []),
+                "patterns":   t.get("patterns_applied", []),
             }
             for t in enriched
         ],
         "validation": report,
     }
+
 
 
 # ── Entry point ────────────────────────────────────────────────────────────────

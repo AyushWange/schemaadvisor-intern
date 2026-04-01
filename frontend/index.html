@@ -90,6 +90,21 @@
                 </div>
             </div>
         </section>
+
+        <!-- Discovery Cards (spec §8.6) — shown when AI found unrecognised requirements -->
+        <section id="discovery-section" class="discovery-section hidden">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>🔍 Discovery Cards</h2>
+                    <span class="badge badge-warn">Unrecognised Requirements</span>
+                </div>
+                <p class="discovery-desc">
+                    The AI couldn't map the following to a known concept.
+                    These have been logged for taxonomy expansion.
+                </p>
+                <div id="discovery-cards" class="discovery-grid"></div>
+            </div>
+        </section>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>

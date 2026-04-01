@@ -417,3 +417,97 @@ code[class*="language-"] {
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.88rem !important;
 }
+
+/* ── Discovery Cards (spec §8.6) ───────────────────────────── */
+.discovery-section {
+    max-width: 1100px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+}
+
+.discovery-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0 0 1rem;
+}
+
+.discovery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.discovery-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 180, 50, 0.25);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.discovery-card:hover {
+    border-color: rgba(255, 180, 50, 0.5);
+    transform: translateY(-2px);
+}
+
+.discovery-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.discovery-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.discovery-raw {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    color: #f0f0f0;
+    font-weight: 500;
+    flex: 1;
+}
+
+.discovery-category {
+    font-size: 0.72rem;
+    background: rgba(255, 180, 50, 0.15);
+    color: #ffb432;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.discovery-nearest {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    border-left: 2px solid rgba(99, 202, 183, 0.4);
+}
+
+.discovery-nearest strong {
+    color: #63cab7;
+    text-transform: capitalize;
+}
+
+.discovery-footer {
+    margin-top: 0.2rem;
+}
+
+.discovery-logged {
+    font-size: 0.75rem;
+    color: rgba(99, 202, 183, 0.7);
+}
+
+.badge-warn {
+    background: rgba(255, 180, 50, 0.15);
+    color: #ffb432;
+    border: 1px solid rgba(255, 180, 50, 0.3);
+}

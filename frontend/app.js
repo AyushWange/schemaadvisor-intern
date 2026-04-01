@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const inputField = document.getElementById('prompt-input');
-    const generateBtn = document.getElementById('generate-btn');
-    const btnText = document.querySelector('.btn-text');
-    const btnLoader = document.querySelector('.btn-loader');
-    const errorMsg = document.getElementById('error-message');
-    
-    const resultsSection = document.getElementById('results-section');
-    const sqlOutput = document.getElementById('sql-output');
-    const tbody = document.getElementById('explain-tbody');
-    const badge = document.getElementById('validation-badge');
+    const inputField       = document.getElementById('prompt-input');
+    const generateBtn      = document.getElementById('generate-btn');
+    const btnText          = document.querySelector('.btn-text');
+    const btnLoader        = document.querySelector('.btn-loader');
+    const errorMsg         = document.getElementById('error-message');
+    const resultsSection   = document.getElementById('results-section');
+    const discoverySection = document.getElementById('discovery-section');
+    const discoveryCards   = document.getElementById('discovery-cards');
+    const sqlOutput        = document.getElementById('sql-output');
+    const tbody            = document.getElementById('explain-tbody');
+    const badge            = document.getElementById('validation-badge');
     const creationOrderVal = document.getElementById('creation-order-val');
-    const copySqlBtn = document.getElementById('copy-sql-btn');
+    const copySqlBtn       = document.getElementById('copy-sql-btn');
 
     // Auto-resize textarea
     inputField.addEventListener('input', function() {
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyText.textContent = 'Copied!';
             copySqlBtn.classList.add('copy-btn--success');
             setTimeout(() => {
-                copyIcon.textContent = '⍘';
+                copyIcon.textContent = '⎘';
                 copyText.textContent = 'Copy';
                 copySqlBtn.classList.remove('copy-btn--success');
             }, 2000);
@@ -39,22 +40,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Generate button
     generateBtn.addEventListener('click', async () => {
         const reqText = inputField.value.trim();
         if (!reqText) return;
 
-        // Set Loading State
         generateBtn.disabled = true;
-        btnText.textContent = 'Generating...';
+        btnText.textContent  = 'Generating...';
         btnLoader.classList.remove('hidden');
         errorMsg.classList.add('hidden');
         resultsSection.classList.add('hidden');
-        
+        discoverySection.classList.add('hidden');
+
         try {
             const response = await fetch('/schema', {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requirements: reqText })
+                body:    JSON.stringify({ requirements: reqText }),
             });
 
             const data = await response.json();
@@ -69,63 +71,117 @@ document.addEventListener('DOMContentLoaded', () => {
             errorMsg.textContent = err.message;
             errorMsg.classList.remove('hidden');
         } finally {
-            // Unset Loading State
             generateBtn.disabled = false;
-            btnText.textContent = 'Generate Schema';
+            btnText.textContent  = 'Generate Schema';
             btnLoader.classList.add('hidden');
         }
     });
 
+    // ── Render all results ────────────────────────────────────────────────────
     function renderResults(data) {
-        // 1. Render SQL
-        sqlOutput.textContent = data.ddl;
-        // Apply Prism.js syntax highlighting
-        if (typeof Prism !== 'undefined') {
-            Prism.highlightElement(sqlOutput);
-        }
 
-        // 2. Render Validation Badge
+        // 1. SQL with syntax highlighting
+        sqlOutput.textContent = data.ddl;
+        if (typeof Prism !== 'undefined') Prism.highlightElement(sqlOutput);
+
+        // 2. Validation badge
         badge.className = 'badge';
-        if (data.validation.skipped) {
+        const v = data.validation || {};
+        if (v.skipped) {
             badge.textContent = 'Unvalidated (No DB)';
             badge.classList.add('badge-info');
-        } else if (data.validation.success === data.validation.total && data.validation.total > 0) {
-            badge.textContent = `Valid (${data.validation.success}/${data.validation.total})`;
+        } else if (v.success === v.total && v.total > 0) {
+            badge.textContent = `Valid (${v.success}/${v.total})`;
             badge.classList.add('badge-success');
         } else {
-            badge.textContent = `Failed (${data.validation.success}/${data.validation.total})`;
+            badge.textContent = `Failed (${v.success}/${v.total})`;
             badge.classList.add('badge-error');
         }
 
-        // 3. Render Explainability Table
+        // 3. Explainability table
         tbody.innerHTML = '';
-        data.explainability.forEach(row => {
-            const tr = document.createElement('tr');
-            
-            // Tier coloring
+        (data.explainability || []).forEach(row => {
+            const tr        = document.createElement('tr');
             const tierClass = `tier-${row.tier}`;
-            
-            // Triggered formatting
-            const triggers = row.triggered_by.map(t => `<span style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;margin-right:4px;">${t}</span>`).join('');
-
+            const triggers  = (row.triggered_by || []).map(t =>
+                `<span style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;margin-right:4px;">${t}</span>`
+            ).join('');
+            const patterns  = (row.patterns || []).map(p =>
+                `<span style="background:rgba(99,202,183,0.15);color:#63cab7;padding:1px 5px;border-radius:3px;font-size:0.75rem;margin-right:3px;">${p}</span>`
+            ).join('');
             tr.innerHTML = `
                 <td style="font-family:'JetBrains Mono',monospace;">${row.table}</td>
                 <td class="${tierClass}">${row.tier}</td>
-                <td>${(row.confidence * 100).toFixed(0)}%</td>
-                <td style="font-size:0.8rem;">${triggers}</td>
+                <td>${((row.confidence || 0) * 100).toFixed(0)}%</td>
+                <td style="font-size:0.8rem;">${triggers}${patterns}</td>
             `;
             tbody.appendChild(tr);
         });
 
-        // 4. Render Creation Order
-        creationOrderVal.textContent = data.creation_order.join(' → ');
+        // 4. Creation order
+        creationOrderVal.textContent = (data.creation_order || []).join(' → ');
 
-        // Show section
+        // 5. Active decisions (shown below creation order if any non-default)
+        const metaDiv  = document.querySelector('.pipeline-meta');
+        const existing = document.getElementById('decisions-row');
+        if (existing) existing.remove();
+        const decisions = data.active_decisions || {};
+        if (Object.keys(decisions).length > 0) {
+            const chips = Object.entries(decisions)
+                .map(([k, v]) =>
+                    `<span style="background:rgba(255,180,50,0.15);color:#ffb432;padding:2px 7px;border-radius:4px;margin-right:5px;font-size:0.8rem;">${k}=${v}</span>`
+                ).join('');
+            const row   = document.createElement('p');
+            row.id      = 'decisions-row';
+            row.innerHTML = `<strong>Active Decisions:</strong> ${chips}`;
+            metaDiv.appendChild(row);
+        }
+
+        // Show results section
         resultsSection.classList.remove('hidden');
-        
-        // Scroll into view gently
-        setTimeout(() => {
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+
+        // 6. Discovery Cards
+        renderDiscoveryCards(data.unmatched || []);
+
+        setTimeout(() => resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+
+    // ── Discovery Cards (spec §8.6) ───────────────────────────────────────────
+    function renderDiscoveryCards(unmatched) {
+        discoveryCards.innerHTML = '';
+
+        const potentialTables = (unmatched || []).filter(u => u.category === 'potential_table');
+
+        if (potentialTables.length === 0) {
+            discoverySection.classList.add('hidden');
+            return;
+        }
+
+        const icons = { potential_table: '🗃️', potential_column: '📋', unsupported_logic: '⚙️' };
+
+        potentialTables.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'discovery-card';
+
+            const nearestHtml = item.nearest_concept
+                ? `<div class="discovery-nearest">💡 Nearest known concept: <strong>${item.nearest_concept.replace(/_/g, ' ')}</strong></div>`
+                : `<div class="discovery-nearest">💡 No similar concept found — candidate for new taxonomy</div>`;
+
+            card.innerHTML = `
+                <div class="discovery-header">
+                    <span class="discovery-icon">${icons[item.category] || '❓'}</span>
+                    <span class="discovery-raw">${item.raw_text}</span>
+                    <span class="discovery-category">${item.category.replace(/_/g, ' ')}</span>
+                </div>
+                ${nearestHtml}
+                <div class="discovery-footer">
+                    <span class="discovery-logged">✓ Logged to Neo4j for review</span>
+                </div>
+            `;
+            discoveryCards.appendChild(card);
+        });
+
+        discoverySection.classList.remove('hidden');
+        setTimeout(() => discoverySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
     }
 });
