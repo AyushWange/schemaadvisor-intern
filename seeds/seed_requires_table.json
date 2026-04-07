@@ -20,6 +20,16 @@
     "tier": "recommended"
   },
   {
+    "concept": "e_commerce_orders",
+    "logical_table": "wishlists",
+    "tier": "suggested"
+  },
+  {
+    "concept": "e_commerce_orders",
+    "logical_table": "gift_cards",
+    "tier": "suggested"
+  },
+  {
     "concept": "product_catalog",
     "logical_table": "products",
     "tier": "required"
@@ -55,6 +65,11 @@
     "tier": "recommended"
   },
   {
+    "concept": "invoicing",
+    "logical_table": "credit_notes",
+    "tier": "suggested"
+  },
+  {
     "concept": "customer_management",
     "logical_table": "customers",
     "tier": "required"
@@ -68,6 +83,11 @@
     "concept": "customer_management",
     "logical_table": "contacts",
     "tier": "recommended"
+  },
+  {
+    "concept": "customer_management",
+    "logical_table": "customer_notes",
+    "tier": "suggested"
   },
   {
     "concept": "user_authentication",

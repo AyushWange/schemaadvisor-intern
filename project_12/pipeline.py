@@ -81,90 +81,14 @@ def _generic_columns(table_name: str) -> list:
 # ── Stage implementations ──────────────────────────────────────────────────────
 
 from project_02.db_access import get_selected_tables, _is_neo4j_available
+from project_08.table_selector import select_tables as _select_tables_raw
 
 def select_tables(concepts):
+    """Wrapper that accepts ExtractedConcept objects and delegates to table_selector."""
     concept_names = [c.name for c in concepts]
+    max_conf = max((c.confidence for c in concepts), default=0.9)
+    return _select_tables_raw(concept_names, concept_confidence=max_conf)
 
-    if _is_neo4j_available():
-        # Neo4j path 
-        merged_dict = get_selected_tables(concept_names)
-        results_map = {}
-        for tname, tbl in merged_dict.items():
-            tier = tbl["tier"]
-            results_map[tname] = {
-                "name": tname,
-                "tier": tier,
-                "triggered_by": tbl["triggered_by"],
-                "patterns_applied": [],
-                "inclusion_confidence": round(
-                    TIER_SCORES.get(tier, 0.5) * 0.6 + max((c.confidence for c in concepts), default=0.9) * 0.4, 2
-                )
-            }
-        
-        # FK dependency pull-in (for tables we fetched)
-        for name, table in list(results_map.items()):
-            if table["tier"] in ("required", "recommended"):
-                for dep in TABLE_DEPS.get(name, []):
-                    if dep not in results_map:
-                        results_map[dep] = {
-                            "name":                dep,
-                            "tier":                "required",
-                            "triggered_by":        [f"dependency of {name}"],
-                            "dependency_reason":   f"Required by {name} (FK)",
-                            "patterns_applied":    [],
-                            "inclusion_confidence": 0.96,
-                        }
-        results = list(results_map.values())
-        results.sort(key=lambda x: -TIER_RANK.get(x["tier"], 0))
-        return results
-
-    # Fallback to local dicts if Neo4j is down
-    all_concepts = set()
-
-    def expand(concept):
-        if concept in all_concepts:
-            return
-        all_concepts.add(concept)
-        for dep in CONCEPT_DEPS.get(concept, []):
-            expand(dep)
-
-    for c in concepts:
-        expand(c.name)
-
-    merged = {}
-    for concept in all_concepts:
-        for table in CONCEPT_TABLES.get(concept, []):
-            name = table["name"]
-            if name not in merged or TIER_RANK.get(table["tier"], 0) > TIER_RANK.get(merged[name]["tier"], 0):
-                merged[name] = {
-                    **table,
-                    "triggered_by":        [concept],
-                    "patterns_applied":    [],
-                    "inclusion_confidence": round(
-                        TIER_SCORES.get(table["tier"], 0.5) * 0.6 +
-                        max((c.confidence for c in concepts), default=0.9) * 0.4, 2
-                    )
-                }
-            else:
-                if concept not in merged[name]["triggered_by"]:
-                    merged[name]["triggered_by"].append(concept)
-
-    for name, table in list(merged.items()):
-        if table["tier"] in ("required", "recommended"):
-            for dep in TABLE_DEPS.get(name, []):
-                if dep not in merged:
-                    merged[dep] = {
-                        "name":                dep,
-                        "tier":                "required",
-                        "triggered_by":        [f"dependency of {name}"],
-                        "dependency_reason":   f"Required by {name} (FK)",
-                        "patterns_applied":    [],
-                        "inclusion_confidence": 0.96,
-                    }
-
-    results = list(merged.values())
-    results.sort(key=lambda x: -TIER_RANK.get(x.get("tier", "suggested"), 0))
-    return results
 
 
 def apply_all_patterns(tables, active_decisions=None):
