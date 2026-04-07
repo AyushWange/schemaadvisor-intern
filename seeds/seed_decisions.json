@@ -1,0 +1,57 @@
+[
+  {
+    "name": "pk_strategy",
+    "default_choice": "auto_increment",
+    "critical": false,
+    "description": "Determines PK column type on every table",
+    "alternatives": [
+      "uuid"
+    ]
+  },
+  {
+    "name": "delete_strategy",
+    "default_choice": "soft_delete",
+    "critical": false,
+    "description": "Adds is_deleted, deleted_at to applicable tables",
+    "alternatives": [
+      "hard_delete"
+    ]
+  },
+  {
+    "name": "tenancy_model",
+    "default_choice": "single_tenant",
+    "critical": true,
+    "description": "Adds tenant_id FK to every table (multi_tenant)",
+    "alternatives": [
+      "multi_tenant"
+    ]
+  },
+  {
+    "name": "audit_policy",
+    "default_choice": "full_audit",
+    "critical": false,
+    "description": "Adds created_at, updated_at, created_by, updated_by",
+    "alternatives": [
+      "no_audit"
+    ]
+  },
+  {
+    "name": "hierarchy_approach",
+    "default_choice": "adjacency_list",
+    "critical": false,
+    "description": "Determines tree structure modeling strategy",
+    "alternatives": [
+      "nested_set",
+      "closure_table"
+    ]
+  },
+  {
+    "name": "temporal_strategy",
+    "default_choice": "current_only",
+    "critical": false,
+    "description": "Adds valid_from, valid_to, version columns when versioned",
+    "alternatives": [
+      "versioned"
+    ]
+  }
+]

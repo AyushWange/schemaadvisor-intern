@@ -1,0 +1,18 @@
+{
+    "scenario_id": 5,
+    "description": "E-commerce + Inventory",
+    "expected_tables": [
+        "customers",
+        "orders",
+        "order_items",
+        "products",
+        "warehouses",
+        "stock_entries",
+        "stock_ledger"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

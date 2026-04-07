@@ -22,3 +22,6 @@ env/
 
 # Docs / Specs
 *.pdf
+
+# Temporary files
+tmp_*.py

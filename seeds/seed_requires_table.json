@@ -1,0 +1,237 @@
+[
+  {
+    "concept": "e_commerce_orders",
+    "logical_table": "orders",
+    "tier": "required"
+  },
+  {
+    "concept": "e_commerce_orders",
+    "logical_table": "order_items",
+    "tier": "required"
+  },
+  {
+    "concept": "e_commerce_orders",
+    "logical_table": "customers",
+    "tier": "required"
+  },
+  {
+    "concept": "e_commerce_orders",
+    "logical_table": "shopping_cart",
+    "tier": "recommended"
+  },
+  {
+    "concept": "product_catalog",
+    "logical_table": "products",
+    "tier": "required"
+  },
+  {
+    "concept": "product_catalog",
+    "logical_table": "categories",
+    "tier": "required"
+  },
+  {
+    "concept": "product_catalog",
+    "logical_table": "attributes",
+    "tier": "recommended"
+  },
+  {
+    "concept": "invoicing",
+    "logical_table": "invoices",
+    "tier": "required"
+  },
+  {
+    "concept": "invoicing",
+    "logical_table": "invoice_items",
+    "tier": "required"
+  },
+  {
+    "concept": "invoicing",
+    "logical_table": "tax_entries",
+    "tier": "recommended"
+  },
+  {
+    "concept": "invoicing",
+    "logical_table": "customers",
+    "tier": "recommended"
+  },
+  {
+    "concept": "customer_management",
+    "logical_table": "customers",
+    "tier": "required"
+  },
+  {
+    "concept": "customer_management",
+    "logical_table": "addresses",
+    "tier": "required"
+  },
+  {
+    "concept": "customer_management",
+    "logical_table": "contacts",
+    "tier": "recommended"
+  },
+  {
+    "concept": "user_authentication",
+    "logical_table": "users",
+    "tier": "required"
+  },
+  {
+    "concept": "user_authentication",
+    "logical_table": "sessions",
+    "tier": "required"
+  },
+  {
+    "concept": "user_authentication",
+    "logical_table": "roles",
+    "tier": "recommended"
+  },
+  {
+    "concept": "user_authentication",
+    "logical_table": "permissions",
+    "tier": "suggested"
+  },
+  {
+    "concept": "payment_processing",
+    "logical_table": "payments",
+    "tier": "required"
+  },
+  {
+    "concept": "payment_processing",
+    "logical_table": "payment_methods",
+    "tier": "required"
+  },
+  {
+    "concept": "payment_processing",
+    "logical_table": "refunds",
+    "tier": "recommended"
+  },
+  {
+    "concept": "inventory_management",
+    "logical_table": "warehouses",
+    "tier": "required"
+  },
+  {
+    "concept": "inventory_management",
+    "logical_table": "stock_entries",
+    "tier": "required"
+  },
+  {
+    "concept": "inventory_management",
+    "logical_table": "stock_ledger",
+    "tier": "recommended"
+  },
+  {
+    "concept": "employee_management",
+    "logical_table": "employees",
+    "tier": "required"
+  },
+  {
+    "concept": "employee_management",
+    "logical_table": "departments",
+    "tier": "required"
+  },
+  {
+    "concept": "employee_management",
+    "logical_table": "designations",
+    "tier": "recommended"
+  },
+  {
+    "concept": "project_tracking",
+    "logical_table": "projects",
+    "tier": "required"
+  },
+  {
+    "concept": "project_tracking",
+    "logical_table": "tasks",
+    "tier": "required"
+  },
+  {
+    "concept": "project_tracking",
+    "logical_table": "time_logs",
+    "tier": "recommended"
+  },
+  {
+    "concept": "project_tracking",
+    "logical_table": "milestones",
+    "tier": "suggested"
+  },
+  {
+    "concept": "gst_compliance",
+    "logical_table": "gst_categories",
+    "tier": "required"
+  },
+  {
+    "concept": "gst_compliance",
+    "logical_table": "hsn_codes",
+    "tier": "required"
+  },
+  {
+    "concept": "gst_compliance",
+    "logical_table": "tax_entries",
+    "tier": "recommended"
+  },
+  {
+    "concept": "supplier_management",
+    "logical_table": "suppliers",
+    "tier": "required"
+  },
+  {
+    "concept": "supplier_management",
+    "logical_table": "supplier_groups",
+    "tier": "recommended"
+  },
+  {
+    "concept": "supplier_management",
+    "logical_table": "purchase_orders",
+    "tier": "recommended"
+  },
+  {
+    "concept": "multi_currency",
+    "logical_table": "currencies",
+    "tier": "required"
+  },
+  {
+    "concept": "multi_currency",
+    "logical_table": "exchange_rates",
+    "tier": "required"
+  },
+  {
+    "concept": "multi_currency",
+    "logical_table": "currency_ledger",
+    "tier": "suggested"
+  },
+  {
+    "concept": "file_attachments",
+    "logical_table": "attachments",
+    "tier": "required"
+  },
+  {
+    "concept": "file_attachments",
+    "logical_table": "storage_buckets",
+    "tier": "recommended"
+  },
+  {
+    "concept": "notifications",
+    "logical_table": "notifications",
+    "tier": "required"
+  },
+  {
+    "concept": "notifications",
+    "logical_table": "notification_channels",
+    "tier": "recommended"
+  },
+  {
+    "concept": "reporting_analytics",
+    "logical_table": "reports",
+    "tier": "required"
+  },
+  {
+    "concept": "reporting_analytics",
+    "logical_table": "dashboards",
+    "tier": "recommended"
+  },
+  {
+    "concept": "reporting_analytics",
+    "logical_table": "report_filters",
+    "tier": "suggested"
+  }
+]

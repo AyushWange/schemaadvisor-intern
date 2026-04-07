@@ -1,0 +1,92 @@
+[
+  {
+    "name": "user_authentication",
+    "description": "User accounts, passwords, sessions, roles, permissions",
+    "category": "platform",
+    "aliases": []
+  },
+  {
+    "name": "product_catalog",
+    "description": "Products, categories, attributes, images, pricing",
+    "category": "commerce",
+    "aliases": []
+  },
+  {
+    "name": "e_commerce_orders",
+    "description": "Shopping cart, checkout, order lifecycle, order items",
+    "category": "commerce",
+    "aliases": []
+  },
+  {
+    "name": "customer_management",
+    "description": "Customer records, addresses, groups, contacts",
+    "category": "commerce",
+    "aliases": []
+  },
+  {
+    "name": "payment_processing",
+    "description": "Payments, payment methods, refunds, reconciliation",
+    "category": "finance",
+    "aliases": []
+  },
+  {
+    "name": "invoicing",
+    "description": "Sales invoices, invoice items, tax line entries",
+    "category": "finance",
+    "aliases": []
+  },
+  {
+    "name": "multi_currency",
+    "description": "Currency definitions, exchange rates, conversions",
+    "category": "finance",
+    "aliases": []
+  },
+  {
+    "name": "gst_compliance",
+    "description": "Indian GST tax categories, HSN codes, tax entries",
+    "category": "finance",
+    "aliases": []
+  },
+  {
+    "name": "inventory_management",
+    "description": "Warehouses, stock entries, stock ledger, reorder levels",
+    "category": "operations",
+    "aliases": []
+  },
+  {
+    "name": "supplier_management",
+    "description": "Supplier records, groups, payment terms, purchase orders",
+    "category": "operations",
+    "aliases": []
+  },
+  {
+    "name": "employee_management",
+    "description": "Employee records, departments, designations",
+    "category": "hr",
+    "aliases": []
+  },
+  {
+    "name": "project_tracking",
+    "description": "Projects, tasks, time logs, milestones",
+    "category": "operations",
+    "aliases": []
+  },
+  {
+    "name": "file_attachments",
+    "description": "File upload records, storage references, metadata",
+    "category": "platform",
+    "aliases": []
+  },
+  {
+    "name": "notifications",
+    "description": "Notification records, delivery channels, read status",
+    "category": "platform",
+    "aliases": []
+  },
+  {
+    "name": "reporting_analytics",
+    "description": "Aggregate tables, dashboard data sources, metrics",
+    "category": "platform",
+    "aliases": []
+  }
+]

@@ -69,6 +69,11 @@ class ConceptIn(BaseModel):
 class CandidateReject(BaseModel):
     raw_text: str
 
+class CandidateMap(BaseModel):
+    raw_text: str
+    target_table: str
+    target_concept: str
+
 # ── Core routes ────────────────────────────────────────────────────────────────
 from fastapi.staticfiles import StaticFiles
 
@@ -180,6 +185,19 @@ def admin_reject_candidate(body: CandidateReject):
     if raw not in _rejected:
         _rejected.append(raw)
     return {"rejected": raw}
+
+from project_02.db_access import map_candidate
+
+@app.post("/admin/candidates/map")
+def admin_map_candidate(body: CandidateMap):
+    global _candidates
+    raw = body.raw_text
+    _candidates = [c for c in _candidates if c["raw_text"] != raw]
+    if raw not in _rejected:
+        _rejected.append(raw)
+        
+    mapped = map_candidate(raw, body.target_concept, body.target_table)
+    return {"mapped": raw, "neo4j_updated": mapped}
 
 # ── Static frontend (MUST be last) ────────────────────────────────────────────
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")

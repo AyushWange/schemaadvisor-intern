@@ -1,0 +1,20 @@
+{
+    "scenario_id": 13,
+    "description": "Complete B2B Hub",
+    "expected_tables": [
+        "tenants",
+        "customers",
+        "orders",
+        "invoices",
+        "suppliers",
+        "products",
+        "warehouses",
+        "currencies",
+        "projects"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

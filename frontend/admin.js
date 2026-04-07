@@ -92,6 +92,7 @@ function renderCandidates(candidates) {
                 <div class="candidate-meta">category: ${c.category}</div>
             </div>
             <div class="concept-actions">
+                <button class="btn-map" data-raw="${c.raw_text}" title="Map to existing logic">Map</button>
                 <button class="btn-approve" data-raw="${c.raw_text}" data-cat="${c.category}" title="Move to registry">Approve</button>
                 <button class="btn-reject"  data-raw="${c.raw_text}" title="Remove from queue">Reject</button>
             </div>
@@ -99,6 +100,10 @@ function renderCandidates(candidates) {
         candidatesList.appendChild(item);
     });
 
+    // Wire map
+    candidatesList.querySelectorAll('.btn-map').forEach(btn => {
+        btn.addEventListener('click', () => mapCandidate(btn.dataset.raw, btn.closest('.candidate-item')));
+    });
     // Wire approve
     candidatesList.querySelectorAll('.btn-approve').forEach(btn => {
         btn.addEventListener('click', () => approveCandidate(btn.dataset.raw, btn.closest('.candidate-item')));
@@ -110,6 +115,27 @@ function renderCandidates(candidates) {
 }
 
 // ── Actions ──────────────────────────────────────────────────
+async function mapCandidate(rawText, itemEl) {
+    const targetConcept = prompt(`Map "${rawText}" to which existing Concept (e.g., e_commerce_orders)?`);
+    if (!targetConcept) return;
+    const targetTable = prompt(`Map "${rawText}" to which Logical Table (e.g., shopping_cart)?`);
+    if (!targetTable) return;
+    
+    try {
+        await fetch(`${API}/admin/candidates/map`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ raw_text: rawText, target_concept: targetConcept, target_table: targetTable })
+        });
+        alert(`Mapped "${rawText}" to ${targetTable} under ${targetConcept}`);
+    } catch(e) { alert('Map failed'); }
+    
+    itemEl.classList.add('fade-out');
+    setTimeout(() => {
+        itemEl.remove();
+        decrementCandidates();
+    }, 300);
+}
 async function removeConcept(key) {
     if (!confirm(`Remove "${key}" from the active concept registry?`)) return;
     try {

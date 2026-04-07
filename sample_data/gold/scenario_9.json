@@ -1,0 +1,16 @@
+{
+    "scenario_id": 9,
+    "description": "GST E-commerce",
+    "expected_tables": [
+        "customers",
+        "orders",
+        "products",
+        "gst_categories",
+        "hsn_codes"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

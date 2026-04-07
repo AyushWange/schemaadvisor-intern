@@ -1,0 +1,17 @@
+{
+    "scenario_id": 2,
+    "description": "B2B with Invoicing",
+    "expected_tables": [
+        "customers",
+        "addresses",
+        "invoices",
+        "invoice_items",
+        "tax_entries",
+        "products"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

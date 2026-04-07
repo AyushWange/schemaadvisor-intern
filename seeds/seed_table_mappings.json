@@ -1,0 +1,442 @@
+[
+  {
+    "logical_table": "attributes",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "attributes",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "tax_entries",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "tax_entries",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "payments",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "payments",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "employees",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "employees",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "exchange_rates",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "exchange_rates",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "products",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "products",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "customers",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "customers",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "permissions",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "permissions",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "invoices",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "invoices",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "contacts",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "contacts",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "stock_entries",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "stock_entries",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "reports",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "reports",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "order_items",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "order_items",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "designations",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "designations",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "suppliers",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "suppliers",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "purchase_orders",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "purchase_orders",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "categories",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "categories",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "currencies",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "currencies",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "payment_methods",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "payment_methods",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "warehouses",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "warehouses",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "dashboards",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "dashboards",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "orders",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "orders",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "refunds",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "refunds",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "roles",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "roles",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "hsn_codes",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "hsn_codes",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "currency_ledger",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "currency_ledger",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "attachments",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "attachments",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "supplier_groups",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "supplier_groups",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "projects",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "projects",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "milestones",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "milestones",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "addresses",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "addresses",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "invoice_items",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "invoice_items",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "time_logs",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "time_logs",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "shopping_cart",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "shopping_cart",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "departments",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "departments",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "stock_ledger",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "stock_ledger",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "notifications",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "notifications",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "storage_buckets",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "storage_buckets",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "sessions",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "sessions",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "users",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "users",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "gst_categories",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "gst_categories",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "tasks",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "tasks",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "report_filters",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "report_filters",
+        "primary": true
+      }
+    ]
+  },
+  {
+    "logical_table": "notification_channels",
+    "implementations": [
+      {
+        "source": "erpnext",
+        "table_template": "notification_channels",
+        "primary": true
+      }
+    ]
+  }
+]
