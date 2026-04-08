@@ -1,0 +1,34 @@
+2026-04-08 12:15:46,612 - api - INFO - Neo4j graph loaded successfully
+2026-04-08 12:17:11,946 - middleware - INFO - [1dc734e3] GET /health from 127.0.0.1
+2026-04-08 12:17:16,650 - middleware - INFO - [819c8d60] GET /health from 127.0.0.1
+2026-04-08 12:17:22,966 - middleware - INFO - [5f6e9f9d] POST /schema from 127.0.0.1
+2026-04-08 12:17:22,971 - api - INFO - [1775630842971] Schema generation request: An e-commerce platform needs a customers table with name, email and address, plus an orders table th...
+2026-04-08 12:17:23,794 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:17:31,948 - api - INFO - [1775630842971] Schema generated in 8.98s with 11 tables
+2026-04-08 12:17:35,977 - middleware - INFO - [2deeb881] GET / from 127.0.0.1
+2026-04-08 12:17:36,016 - middleware - INFO - [2a16e07f] GET /styles.css from 127.0.0.1
+2026-04-08 12:17:36,026 - middleware - INFO - [2c548a84] GET /app.js from 127.0.0.1
+2026-04-08 12:17:36,229 - middleware - INFO - [cc0cd08d] GET /health from 127.0.0.1
+2026-04-08 12:17:36,391 - middleware - INFO - [8eb92ea5] GET /favicon.ico from 127.0.0.1
+2026-04-08 12:40:07,585 - middleware - INFO - [a981b10c] POST /schema from 127.0.0.1
+2026-04-08 12:40:07,586 - api - INFO - [1775632207586] Schema generation request: Multi-tenant SaaS platform with versioned data model and UUID primary keys...
+2026-04-08 12:40:07,997 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:40:08,537 - api - WARNING - [1775632207586] Pipeline error: No concepts extracted
+2026-04-08 12:40:19,869 - api - INFO - Neo4j graph loaded successfully
+2026-04-08 12:40:45,775 - middleware - INFO - [34f6fe06] GET /health from 127.0.0.1
+2026-04-08 12:40:47,861 - middleware - INFO - [df772122] POST /schema from 127.0.0.1
+2026-04-08 12:40:47,864 - api - INFO - [1775632247864] Schema generation request: I need a customers table and orders table...
+2026-04-08 12:40:48,806 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:40:56,931 - api - ERROR - [1775632247864] Unexpected error: AttributeError: 'str' object has no attribute 'get'
+2026-04-08 12:40:58,968 - middleware - INFO - [5c1aac48] POST /schema from 127.0.0.1
+2026-04-08 12:40:58,969 - api - INFO - [1775632258969] Schema generation request: Build a multi-tenant SaaS with user tenancies...
+2026-04-08 12:40:59,334 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:40:59,948 - api - WARNING - [1775632258969] Pipeline error: No concepts extracted
+2026-04-08 12:41:01,989 - middleware - INFO - [f376c8bd] POST /schema from 127.0.0.1
+2026-04-08 12:41:01,991 - api - INFO - [1775632261991] Schema generation request: I need UUID-based primary keys for all tables...
+2026-04-08 12:41:02,504 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:41:02,505 - api - WARNING - [1775632261991] Pipeline error: No concepts extracted
+2026-04-08 12:41:04,515 - middleware - INFO - [1b040eed] POST /schema from 127.0.0.1
+2026-04-08 12:41:04,515 - api - INFO - [1775632264515] Schema generation request: I need to track all historical changes with versioning...
+2026-04-08 12:41:04,904 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 401 Unauthorized"
+2026-04-08 12:41:04,905 - api - WARNING - [1775632264515] Pipeline error: No concepts extracted

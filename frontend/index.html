@@ -133,6 +133,21 @@
                 </button>
             </div>
 
+            <!-- ── Decision Confirmation Panel ──────────────────── -->
+            <div id="decision-panel" class="decision-panel hidden">
+                <div class="glass-panel decision-container">
+                    <div class="panel-header">
+                        <h2>Review Design Decisions</h2>
+                        <p class="panel-subtitle">Confirm the design decisions before generating your schema</p>
+                    </div>
+                    <div id="decisions-list" class="decisions-list"></div>
+                    <div class="button-group">
+                        <button id="confirm-decisions-btn" class="btn-primary">✓ Confirm & Generate</button>
+                        <button id="cancel-decisions-btn" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- ── Tab: Schema ──────────────────────────────────── -->
             <div id="tab-content-schema" class="tab-content active">
                 <!-- Conflicts & Warnings Panel -->

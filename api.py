@@ -103,6 +103,10 @@ _concept_registry: dict[str, str] = copy.deepcopy(_BASE_CONCEPTS)
 _candidates: list[dict]            = []   # unmatched items queued for review
 _rejected:   list[str]             = []   # rejected raw_text values
 
+# ── Session store for pending decision confirmations (request_id -> pending state) ─
+_pending_decisions: dict[str, dict] = {}  # Stores pending decisions awaiting user confirmation
+# Format: { request_id: { "requirements": str, "pending_decisions": [...], "timestamp": datetime } }
+
 # ── Request / Response models with validation ──────────────────────────────────
 class SchemaRequest(BaseModel):
     requirements: str = Field(..., min_length=10, max_length=2000, description="Business requirements in natural language (10-2000 chars)")
@@ -124,13 +128,44 @@ class ExplainabilityRow(BaseModel):
     confidence:   float = Field(..., ge=0, le=1)
     triggered_by: list[str]
 
+# ── Decision Confirmation Models (must be defined before SchemaResponse) ──────
+class PendingDecision(BaseModel):
+    """A design decision awaiting user confirmation"""
+    decision_name: str
+    recommended_choice: str
+    alternative_choices: list[str]
+    confidence: float = Field(..., ge=0, le=1)
+    reasoning: str
+    impact: str
+
+class DecisionOverride(BaseModel):
+    """User's confirmation of a decision"""
+    decision_name: str
+    chosen_choice: str
+    confidence: float = 0.95
+
+class ConfirmRequest(BaseModel):
+    """Request to finalize schema with user-confirmed decisions"""
+    request_id: str
+    requirements: str = Field(..., min_length=10, max_length=2000)
+    decision_overrides: list[DecisionOverride] = []
+
 class SchemaResponse(BaseModel):
-    ddl:            str
-    tables:         list[str]
-    creation_order: list[str]
-    explainability: list[ExplainabilityRow]
-    validation:     dict
+    ddl:            str = ""
+    tables:         list[str] = []
+    creation_order: list[str] = []
+    explainability: list[ExplainabilityRow] = []
+    validation:     dict = {}
     conflicts:      list[dict] = []
+    # Decision confirmation flow fields
+    pending_decisions: list[PendingDecision] = []
+    request_id:     str = ""
+    has_blocking_issues: bool = False
+    blocking_conflicts: list[dict] = []
+    message:        str = ""
+
+    class Config:
+        extra = "allow"
 
 class ConceptIn(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
@@ -151,8 +186,93 @@ class CandidateMap(BaseModel):
     target_table: str = Field(..., min_length=1, max_length=64)
     target_concept: str = Field(..., min_length=1, max_length=100)
 
+# (Decision models already defined above SchemaResponse)
+
 # ── Core routes ────────────────────────────────────────────────────────────────
 from fastapi.staticfiles import StaticFiles
+
+def build_pending_decisions(active_decisions: dict) -> list[PendingDecision]:
+    """
+    Extract pending decisions from pipeline results that require user confirmation.
+    
+    A decision is pending if:
+    1. It's a critical decision (tenancy_model) or
+    2. It deviates from default or
+    3. Confidence is between 0.7-0.85 (moderate uncertainty)
+    """
+    # Decision metadata: (name, default, alternatives, critical, impact_description)
+    DECISION_META = {
+        "pk_strategy": {
+            "default": "auto_increment",
+            "alternatives": ["uuid"],
+            "critical": False,
+            "impact": "Changes primary key type; affects composite key width and indexing"
+        },
+        "delete_strategy": {
+            "default": "soft_delete",
+            "alternatives": ["hard_delete"],
+            "critical": True,
+            "impact": "Soft delete adds 'is_deleted' and 'deleted_at' columns for audit trail"
+        },
+        "tenancy_model": {
+            "default": "single_tenant",
+            "alternatives": ["multi_tenant"],
+            "critical": True,
+            "impact": "Multi-tenant adds 'tenant_id' to all tables and modifies foreign key constraints"
+        },
+        "audit_policy": {
+            "default": "full_audit",
+            "alternatives": ["no_audit"],
+            "critical": False,
+            "impact": "Full audit adds 'created_by', 'updated_by', 'created_at', 'updated_at' columns"
+        },
+        "hierarchy_approach": {
+            "default": "adjacency_list",
+            "alternatives": ["nested_set", "closure_table"],
+            "critical": False,
+            "impact": "Affects hierarchical data structure (parent_id, lft/rgt, or closure table)"
+        },
+        "temporal_strategy": {
+            "default": "current_only",
+            "alternatives": ["versioned"],
+            "critical": False,
+            "impact": "Versioned adds 'valid_from', 'valid_to', 'version_id' for historical tracking"
+        }
+    }
+    
+    pending = []
+    for decision_name, decision_info in active_decisions.items():
+        if decision_name not in DECISION_META:
+            continue
+        
+        meta = DECISION_META[decision_name]
+        choice = decision_info.get("choice", meta["default"])
+        confidence = decision_info.get("confidence", 0.9)
+        source = decision_info.get("source", "unknown")
+        
+        # Pending if: critical decision, low-moderate confidence, or non-default choice
+        is_non_default = choice != meta["default"]
+        is_moderate_confidence = 0.7 <= confidence < 0.85
+        is_critical_decision = meta["critical"]
+        
+        should_confirm = (
+            is_critical_decision or 
+            is_moderate_confidence or 
+            (is_non_default and confidence < 0.95)
+        )
+        
+        if should_confirm:
+            pending.append(PendingDecision(
+                decision_name=decision_name,
+                recommended_choice=choice,
+                alternative_choices=[alt for alt in meta["alternatives"] if alt != choice],
+                confidence=confidence,
+                reasoning=f"System {'recommended' if source == 'llm' else 'inferred'} '{choice}' "
+                          f"based on requirements analysis (confidence: {confidence:.0%})",
+                impact=meta["impact"]
+            ))
+    
+    return pending
 
 @app.get("/api")
 def root():
@@ -191,6 +311,11 @@ async def generate_schema(request: Request, req: SchemaRequest):
     
     Rate limit: 30 requests per minute per IP
     Max payload: 2000 characters
+    
+    To use decision confirmation flow:
+    1. POST /schema with requirements
+    2. If pending_decisions exist in response, review them
+    3. POST /schema/confirm with request_id and decision_overrides
     """
     request_id = f"{int(time.time() * 1000)}"
     start_time = time.time()
@@ -233,7 +358,39 @@ async def generate_schema(request: Request, req: SchemaRequest):
                 detail=f"Could not extract concepts: {result['error']}"
             )
 
-        # ── Log unmatched items as CandidateConcept nodes in Neo4j ────────────────
+        # ── Check for pending decisions requiring user confirmation ──────────────────
+        active_decisions = result.get("active_decisions", {})
+        pending = build_pending_decisions(active_decisions)
+        
+        if pending:
+            # Store pending state for later confirmation
+            _pending_decisions[request_id] = {
+                "requirements": req.requirements,
+                "pending_decisions": [p.dict() for p in pending],
+                "active_decisions": active_decisions,
+                "pipeline_result": result,
+                "timestamp": datetime.now()
+            }
+            logger.info(f"[{request_id}] {len(pending)} pending decisions awaiting user confirmation")
+            
+            return {
+                "pending_decisions": pending,
+                "request_id": request_id,
+                "has_blocking_issues": len(result.get("conflicts", [])) > 0 and 
+                                       any(c.get("category") == "hard_incompatibility" for c in result.get("conflicts", [])),
+                "blocking_conflicts": [c for c in result.get("conflicts", []) if c.get("category") == "hard_incompatibility"],
+                "message": f"Review {len(pending)} design decisions before confirming",
+                # Legacy fields for backward compatibility
+                "ddl": "",
+                "tables": [],
+                "creation_order": [],
+                "explainability": [],
+                "validation": {},
+                "conflicts": result.get("conflicts", [])
+            }
+        
+        # ── No pending decisions: return final DDL immediately ───────────────────────
+        # Log unmatched items as CandidateConcept nodes in Neo4j
         unmatched_objs = result.get("unmatched", [])
         if unmatched_objs:
             # Convert dict list to objects with attributes for the logger
@@ -268,6 +425,99 @@ async def generate_schema(request: Request, req: SchemaRequest):
     except Exception as e:
         logger.error(f"[{request_id}] Unexpected error: {type(e).__name__}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error - see logs for details")
+
+@app.post("/schema/confirm", response_model=SchemaResponse)
+@limiter.limit("30/minute")
+async def confirm_schema(request: Request, conf: ConfirmRequest):
+    """
+    Confirm design decisions and generate final schema.
+    
+    This endpoint is used after receiving pending_decisions from POST /schema.
+    User reviews recommended decisions and provides their choices via decision_overrides.
+    
+    Example:
+    {
+        "request_id": "1234567890123",
+        "requirements": "e-commerce platform...",
+        "decision_overrides": [
+            {
+                "decision_name": "tenancy_model",
+                "chosen_choice": "multi_tenant",
+                "confidence": 0.95
+            }
+        ]
+    }
+    """
+    request_id = conf.request_id
+    start_time = time.time()
+    
+    try:
+        logger.info(f"[{request_id}] Schema confirmation request with {len(conf.decision_overrides)} overrides")
+        
+        # Check if we have pending state for this request_id
+        if request_id not in _pending_decisions:
+            logger.warning(f"[{request_id}] No pending decisions found - may have expired or request_id invalid")
+            raise HTTPException(
+                status_code=404,
+                detail="No pending decisions found for this request_id. Please start with POST /schema"
+            )
+        
+        pending_state = _pending_decisions[request_id]
+        pipeline_result = pending_state["pipeline_result"]
+        active_decisions = pending_state["active_decisions"]
+        
+        # Apply user's decision overrides
+        for override in conf.decision_overrides:
+            decision_name = override.decision_name
+            chosen = override.chosen_choice
+            confidence = override.confidence
+            
+            if decision_name in active_decisions:
+                active_decisions[decision_name]["choice"] = chosen
+                active_decisions[decision_name]["confidence"] = confidence
+                active_decisions[decision_name]["source"] = "user_confirmed"
+                logger.info(f"[{request_id}] User confirmed {decision_name}={chosen}")
+        
+        # Re-run pattern application with user-confirmed decisions
+        # This is done by running the pipeline again but with user_overrides
+        import signal
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Schema generation exceeded 120 second timeout")
+        
+        try:
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(120)
+        except (AttributeError, ValueError):
+            pass
+        
+        # Run pipeline again with user overrides
+        result = run_pipeline(conf.requirements, verbose=False, user_overrides=active_decisions)
+        
+        try:
+            signal.alarm(0)
+        except (AttributeError, ValueError):
+            pass
+        
+        if "error" in result:
+            logger.error(f"[{request_id}] Pipeline error on confirmation: {result['error']}")
+            raise HTTPException(status_code=422, detail=f"Schema generation failed: {result['error']}")
+        
+        # Clean up pending state
+        del _pending_decisions[request_id]
+        
+        elapsed = time.time() - start_time
+        logger.info(f"[{request_id}] Schema confirmed in {elapsed:.2f}s with {len(result.get('tables', []))} tables")
+        
+        return result
+    
+    except HTTPException:
+        raise
+    except TimeoutError as e:
+        logger.error(f"[{request_id}] Timeout: {str(e)}")
+        raise HTTPException(status_code=504, detail="Schema generation timeout")
+    except Exception as e:
+        logger.error(f"[{request_id}] Error confirming schema: {type(e).__name__}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error confirming schema - see logs")
 
 # ── Admin: Concept Registry ────────────────────────────────────────────────────
 @app.get("/admin/concepts")

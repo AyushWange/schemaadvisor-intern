@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const conflictsTitle    = document.getElementById('conflicts-title');
     const conflictsClose    = document.getElementById('conflicts-close');
 
+    // Decision confirmation panel
+    const decisionPanel     = document.getElementById('decision-panel');
+    const decisionsList     = document.getElementById('decisions-list');
+    const confirmBtn        = document.getElementById('confirm-decisions-btn');
+    const cancelDecisionsBtn = document.getElementById('cancel-decisions-btn');
+
     // Explain tab
     const explainTbody      = document.getElementById('explain-tbody');
 
@@ -54,8 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const zoomOutBtn        = document.getElementById('graph-zoom-out');
     const resetBtn          = document.getElementById('graph-reset');
 
-    // Store last API result
+    // Store last API result and request state
     let lastData = null;
+    let currentRequestId = null;
+    let currentRequirements = null;
 
     /* ── Health check ────────────────────────────────── */
     const healthDot = document.getElementById('health-dot');
@@ -164,8 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data.detail || 'Failed to generate schema. Try rephrasing.');
-            lastData = data;
-            renderResults(data);
+            
+            // Check if we have pending decisions awaiting confirmation
+            if (data.pending_decisions && data.pending_decisions.length > 0) {
+                currentRequestId = data.request_id;
+                currentRequirements = reqText;
+                showDecisionConfirmation(data.pending_decisions);
+            } else {
+                lastData = data;
+                renderResults(data);
+            }
         } catch (err) {
             errorMsg.textContent = err.message;
             errorMsg.classList.remove('hidden');
@@ -316,6 +332,119 @@ document.addEventListener('DOMContentLoaded', () => {
             conflictsList.appendChild(item);
         });
     }
+
+    /* ── Decision Confirmation Panel ──────────────────── */
+    function showDecisionConfirmation(pendingDecisions) {
+        decisionsList.innerHTML = '';
+        
+        // Create radio group for each pending decision
+        pendingDecisions.forEach((decision, idx) => {
+            const container = document.createElement('div');
+            container.className = 'decision-card';
+            
+            const title = document.createElement('div');
+            title.className = 'decision-title';
+            title.innerHTML = `
+                <strong>${decision.decision_name}</strong>
+                <span class="decision-confidence">${(decision.confidence * 100).toFixed(0)}% confidence</span>
+            `;
+            
+            const reasoning = document.createElement('div');
+            reasoning.className = 'decision-reasoning';
+            reasoning.textContent = decision.reasoning;
+            
+            const impact = document.createElement('div');
+            reasoning.className = 'decision-impact';
+            impact.textContent = `Adds: ${decision.impact}`;
+            
+            const choices = document.createElement('div');
+            choices.className = 'decision-choices';
+            
+            // Radio buttons for chosen option
+            const chosenLabel = document.createElement('label');
+            chosenLabel.className = 'decision-choice-label';
+            chosenLabel.innerHTML = `
+                <input type="radio" name="decision_${idx}" value="${decision.recommended_choice}" checked>
+                <span class="choice-name">${decision.recommended_choice}</span>
+                <span class="choice-label">(Recommended)</span>
+            `;
+            choices.appendChild(chosenLabel);
+            
+            // Radio buttons for alternatives
+            decision.alternative_choices.forEach(alt => {
+                const altLabel = document.createElement('label');
+                altLabel.className = 'decision-choice-label';
+                altLabel.innerHTML = `
+                    <input type="radio" name="decision_${idx}" value="${alt}">
+                    <span class="choice-name">${alt}</span>
+                `;
+                choices.appendChild(altLabel);
+            });
+            
+            container.appendChild(title);
+            container.appendChild(reasoning);
+            container.appendChild(impact);
+            container.appendChild(choices);
+            decisionsList.appendChild(container);
+        });
+        
+        // Show panel
+        if (decisionPanel) decisionPanel.classList.remove('hidden');
+    }
+    
+    // Confirm decisions and proceed with schema generation
+    confirmBtn?.addEventListener('click', async () => {
+        if (!currentRequestId || !currentRequirements) return;
+        
+        // Collect user's decision choices
+        const decisionOverrides = [];
+        const decisionElements = document.querySelectorAll('.decision-card');
+        decisionElements.forEach((el, idx) => {
+            const selected = el.querySelector(`input[name="decision_${idx}"]:checked`);
+            if (selected) {
+                decisionOverrides.push({
+                    decision_name: selected.parentElement.parentElement.querySelector('strong').textContent,
+                    chosen_choice: selected.value,
+                    confidence: 0.95  // User explicitly confirmed
+                });
+            }
+        });
+        
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Confirming…';
+        
+        try {
+            const resp = await fetch('/schema/confirm', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    request_id: currentRequestId,
+                    requirements: currentRequirements,
+                    decision_overrides: decisionOverrides
+                }),
+            });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.detail || 'Failed to confirm schema.');
+            
+            lastData = data;
+            if (decisionPanel) decisionPanel.classList.add('hidden');
+            renderResults(data);
+        } catch (err) {
+            errorMsg.textContent = err.message;
+            errorMsg.classList.remove('hidden');
+        } finally {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirm & Generate';
+        }
+    });
+    
+    // Cancel decision confirmation
+    cancelDecisionsBtn?.addEventListener('click', () => {
+        if (decisionPanel) decisionPanel.classList.add('hidden');
+        generateBtn.disabled = false;
+        currentRequestId = null;
+        currentRequirements = null;
+    });
 
     /* ── 3. Explainability ───────────────────────────── */
     function renderExplainability(rows) {

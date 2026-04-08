@@ -288,7 +288,7 @@ def validate_ddl(ddl):
 
 # ── Main pipeline function ─────────────────────────────────────────────────────
 
-def run_pipeline(requirements: str, verbose: bool = True) -> dict:
+def run_pipeline(requirements: str, verbose: bool = True, user_overrides: dict = None) -> dict:
     if verbose:
         print(f"\n{'='*70}")
         print(f"INPUT: {requirements}")
@@ -321,6 +321,19 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
     for d in extraction.decisions:
         overrides[d.name] = d.choice
         overrides[f"{d.name}_confidence"] = d.confidence
+
+    # Apply user-confirmed overrides (from decision confirmation flow)
+    if user_overrides:
+        if verbose:
+            print("    Applying user-confirmed decision overrides...")
+        for decision_name, decision_info in user_overrides.items():
+            if isinstance(decision_info, dict) and "choice" in decision_info:
+                choice = decision_info.get("choice")
+                confidence = decision_info.get("confidence", 0.95)
+                overrides[decision_name] = choice
+                overrides[f"{decision_name}_confidence"] = confidence
+                if verbose:
+                    print(f"      {decision_name}={choice} (confidence={confidence:.2f})")
 
     # build_active_decisions applies defaults + critical halt gate
     active_map   = build_active_decisions(overrides)
