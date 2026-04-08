@@ -129,6 +129,7 @@ def apply_all_patterns(tables, active_decisions=None):
         if do_audit: _stamp("audit_columns", PATTERNS.get("audit_columns", []))
         if do_soft_del: _stamp("soft_delete", PATTERNS.get("soft_delete", []))
         if do_temporal: _stamp("temporal_version", PATTERNS.get("temporal_version", []))
+        if do_multi_tent: _stamp("multi_tenant", PATTERNS.get("multi_tenant", []))
 
         t["columns"]      = base_cols
         t["enforced_fks"] = ENFORCED_FKS.get(t["name"], [])
