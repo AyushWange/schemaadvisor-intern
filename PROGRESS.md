@@ -195,3 +195,12 @@ The system is fully production-ready with conflict resolution, multi-tenant supp
   - ✅ Decision confirmation flow fully functional
   - ✅ Conflicts visualization in frontend with hard blocks and tradeoff warnings
   - **Status**: PRODUCTION-READY v2.8.0 ✅
+
+## Next Session (2026-04-08 Night)
+- [ ] **Production Deployment**: 
+  - Update `.env` with valid `ANTHROPIC_API_KEY`.
+  - Configure `ALLOWED_ORIGINS` for the production domain.
+  - Setup Nginx reverse proxy with SSL/TLS.
+- [ ] **Technical Enhancement**:
+  - Implement Redis/In-memory caching for Neo4j concept registry (1hr TTL) to improve response times and reduce database load.
+  - Add Prometheus metrics for monitoring API health and usage.
