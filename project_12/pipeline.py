@@ -82,6 +82,7 @@ def _generic_columns(table_name: str) -> list:
 
 from project_02.db_access import get_selected_tables, _is_neo4j_available
 from project_08.table_selector import select_tables as _select_tables_raw
+from project_10.conflicts import build_active_decisions, detect_conflicts
 
 def select_tables(concepts):
     """Wrapper that accepts ExtractedConcept objects and delegates to table_selector."""
@@ -312,15 +313,76 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
             print(f"    → decision: {d.name}={d.choice} ({d.confidence:.2f})")
 
     # Stage 2: Conflict detection
-    active_decisions = {d.name: d.choice for d in extraction.decisions}
     if verbose:
         print("\n  Stage 2: Conflict Detection")
+
+    # Build overrides dict with confidence scores for the critical-decision gate
+    overrides = {}
+    for d in extraction.decisions:
+        overrides[d.name] = d.choice
+        overrides[f"{d.name}_confidence"] = d.confidence
+
+    # build_active_decisions applies defaults + critical halt gate
+    active_map   = build_active_decisions(overrides)
+    # Flatten to {decision_name: choice} for downstream stages (non-halted only)
+    active_decisions = {
+        k: v["choice"]
+        for k, v in active_map.items()
+        if v.get("source") != "halted"
+    }
+
+    if verbose:
         if active_decisions:
             for k, v in active_decisions.items():
-                print(f"    Active decision: {k}={v}")
+                src = active_map[k].get("source", "")
+                if src != "default":
+                    print(f"    Active decision: {k}={v} ({src})")
         else:
             print("    No non-default decisions detected — using all defaults")
+
+        halted = [k for k, v in active_map.items() if v.get("source") == "halted"]
+        for h in halted:
+            print(f"    ⚠ HALTED: {h}={active_map[h]['choice']} "
+                  f"(confidence {active_map[h]['confidence']:.2f} < 0.85, "
+                  f"critical decision — reverting to default)")
+
+    # Run conflict detection against the resolved active decisions
+    conflicts = detect_conflicts(active_map)
+    warnings  = []
+    hard_blocks = []
+
+    for conflict in conflicts:
+        if conflict["category"] == "hard_incompatibility":
+            hard_blocks.append(conflict)
+            if verbose:
+                print(f"\n    ✗ HARD INCOMPATIBILITY: "
+                      f"{conflict['decision_a']}={conflict['choice_a']} "
+                      f"× {conflict['decision_b']}={conflict['choice_b']}")
+                print(f"      Reason:     {conflict['reason']}")
+                print(f"      Resolution: {conflict['resolution']}")
+        else:  # preference_tradeoff
+            warnings.append(conflict)
+            if verbose:
+                print(f"\n    ⚠ WARNING: "
+                      f"{conflict['decision_a']}={conflict['choice_a']} "
+                      f"× {conflict['decision_b']}={conflict['choice_b']}")
+                print(f"      Reason:     {conflict['reason']}")
+                print(f"      Resolution: {conflict['resolution']}")
+
+    # Hard incompatibilities block the pipeline entirely
+    if hard_blocks:
+        if verbose:
+            print("\n    Pipeline halted — resolve hard incompatibilities before continuing.")
+        return {
+            "error":    "Hard incompatibility detected",
+            "conflicts": hard_blocks,
+            "unmatched": [u.model_dump() for u in extraction.unmatched],
+        }
+
+    if verbose and not conflicts:
         print("    No conflicts detected!")
+    elif verbose and warnings:
+        print("\n    Continuing with warnings...")
 
     # Stage 3: Table selection
     if verbose:
@@ -380,6 +442,7 @@ def run_pipeline(requirements: str, verbose: bool = True) -> dict:
         "tables":           [t["name"] for t in enriched],
         "creation_order":   order,
         "active_decisions": active_decisions,
+        "conflicts":        warnings,   # preference_tradeoff warnings surfaced to frontend
         "unmatched":        [u.model_dump() for u in extraction.unmatched],
         "explainability": [
             {

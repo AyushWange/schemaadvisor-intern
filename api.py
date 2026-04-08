@@ -61,6 +61,7 @@ class SchemaResponse(BaseModel):
     creation_order: list[str]
     explainability: list[ExplainabilityRow]
     validation:     dict
+    conflicts:      list[dict] = []
 
 class ConceptIn(BaseModel):
     name:        str
