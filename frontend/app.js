@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableSummaryCards = document.getElementById('table-summary-cards');
     const copySqlBtn        = document.getElementById('copy-sql-btn');
 
+    // Conflicts panel
+    const conflictsPanel    = document.getElementById('conflicts-panel');
+    const conflictsList     = document.getElementById('conflicts-list');
+    const conflictsTitle    = document.getElementById('conflicts-title');
+    const conflictsClose    = document.getElementById('conflicts-close');
+
     // Explain tab
     const explainTbody      = document.getElementById('explain-tbody');
 
@@ -106,6 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tabId === 'graph' && lastData) renderGraph(lastData);
         });
     });
+
+    /* ── Conflicts panel close ───────────────────────── */
+    if (conflictsClose) {
+        conflictsClose.addEventListener('click', () => {
+            conflictsPanel.classList.add('hidden');
+        });
+    }
 
     /* ── Copy helpers ────────────────────────────────── */
     function setupCopy(btn, getText) {
@@ -183,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderSQL(data);
         renderMeta(data);
+        renderConflicts(data.conflicts || []);
         renderExplainability(data.explainability || []);
         renderJSONTree(data);
         renderDiscoveryCards(data.unmatched || []);
@@ -242,6 +256,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* ── 2.5. Conflicts & Warnings ─────────────────────── */
+    function renderConflicts(conflicts) {
+        conflictsList.innerHTML = '';
+        if (!conflicts || conflicts.length === 0) {
+            conflictsPanel.classList.add('hidden');
+            return;
+        }
+
+        conflictsPanel.classList.remove('hidden');
+
+        // Separate hard incompatibilities from preference tradeoffs
+        const hardBlocks = conflicts.filter(c => c.category === 'hard_incompatibility');
+        const warnings = conflicts.filter(c => c.category === 'preference_tradeoff');
+
+        // Update title based on conflict type
+        if (hardBlocks.length > 0) {
+            conflictsTitle.textContent = '✗ Hard Incompatibilities Detected';
+            conflictsPanel.classList.add('conflicts-critical');
+            conflictsPanel.classList.remove('conflicts-warning');
+        } else {
+            conflictsTitle.textContent = '⚠️ Design Trade-offs & Warnings';
+            conflictsPanel.classList.add('conflicts-warning');
+            conflictsPanel.classList.remove('conflicts-critical');
+        }
+
+        // Render all conflicts
+        const allConflicts = [...hardBlocks, ...warnings];
+        allConflicts.forEach(conflict => {
+            const item = document.createElement('div');
+            item.className = `conflict-item conflict-${conflict.category}`;
+            
+            const icon = conflict.category === 'hard_incompatibility' ? '✗' : '⚠';
+            const categoryLabel = conflict.category === 'hard_incompatibility' 
+                ? 'Hard Incompatibility' 
+                : 'Design Trade-off';
+
+            item.innerHTML = `
+                <div class="conflict-header">
+                    <span class="conflict-icon">${icon}</span>
+                    <span class="conflict-category">${categoryLabel}</span>
+                </div>
+                <div class="conflict-body">
+                    <div class="conflict-conflict">
+                        <strong>${conflict.decision_a}</strong> = <code>${conflict.choice_a}</code>
+                        <span class="conflict-vs">×</span>
+                        <strong>${conflict.decision_b}</strong> = <code>${conflict.choice_b}</code>
+                    </div>
+                    <div class="conflict-reason">
+                        <span class="conflict-reason-label">Why:</span>
+                        ${conflict.reason}
+                    </div>
+                    <div class="conflict-resolution">
+                        <span class="conflict-resolution-label">Resolution:</span>
+                        ${conflict.resolution}
+                    </div>
+                </div>
+            `;
+            conflictsList.appendChild(item);
+        });
+    }
+
     /* ── 3. Explainability ───────────────────────────── */
     function renderExplainability(rows) {
         explainTbody.innerHTML = '';
@@ -262,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ── 4. Discovery Cards ──────────────────────────── */
+    /* ── 4. Discovery Cards ──────────────────────────– */
     function renderDiscoveryCards(unmatched) {
         discoveryCards.innerHTML = '';
         const items = (unmatched || []).filter(u => u.category === 'potential_table');

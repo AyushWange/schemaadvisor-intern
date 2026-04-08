@@ -435,6 +435,79 @@ docker run -d --name postgres-intern \
 
 ---
 
+## API & Frontend
+
+### Running the API Server
+```bash
+# Development
+uvicorn api:app --reload --port 8000
+
+# Production (with 4 workers)
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker api:app
+
+# With Docker
+docker-compose up
+```
+
+### API Endpoints
+- `POST /schema` — Generate schema from natural language (rate limited: 30/min)
+- `GET /health` — Health check with uptime and service status
+- `GET /admin/concepts` — List concept registry
+- `POST /admin/concepts` — Add new concept
+- `DELETE /admin/concepts/{key}` — Remove concept
+- `GET /admin/candidates` — List unmatched candidates (for taxonomy expansion)
+- `POST /admin/candidates/reject` — Reject candidate
+- `POST /admin/candidates/map` — Map candidate to concept
+
+### Frontend
+- Location: `frontend/` directory
+- Features: Live schema preview, dependency graphs, explainability, conflict visualization
+- Browser: Works with any modern browser (Chrome 90+, Firefox 88+, Safari 14+)
+
+---
+
+## Production Deployment
+
+**SchemaAdvisor is production-ready!**  
+See [DEPLOYMENT.md](DEPLOYMENT.md) for comprehensive guide including:
+
+✅ **Security**
+- Input validation and XSS protection
+- Rate limiting (30 req/min per IP)
+- CORS restrictions
+- Request timeout (120s)
+
+✅ **Monitoring**
+- Structured logging with request IDs
+- Health check endpoint
+- Circuit breakers for external services
+- Response timing headers
+
+✅ **Reliability**
+- Graceful error handling
+- Neo4j/PostgreSQL fallbacks
+- Automatic service recovery
+
+✅ **Deployment Options**
+- Docker/Docker Compose (recommended)
+- Systemd service (Linux)
+- Gunicorn + Nginx
+
+Quick start:
+```bash
+# Set environment variables
+export ALLOWED_ORIGINS="https://yourdomain.com"
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+# Run with Docker
+docker-compose up -d
+
+# Verify
+curl http://localhost:8000/health
+```
+
+---
+
 ## What I Learned
 ```
 ✓ Kahn's topological sort algorithm

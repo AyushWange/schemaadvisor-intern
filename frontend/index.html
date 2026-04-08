@@ -135,6 +135,17 @@
 
             <!-- ── Tab: Schema ──────────────────────────────────── -->
             <div id="tab-content-schema" class="tab-content active">
+                <!-- Conflicts & Warnings Panel -->
+                <div id="conflicts-panel" class="conflicts-panel hidden">
+                    <div class="glass-panel conflicts-container">
+                        <div class="panel-header">
+                            <h2 id="conflicts-title">⚠️ Design Conflicts & Trade-offs</h2>
+                            <button id="conflicts-close" class="icon-btn" title="Dismiss">✕</button>
+                        </div>
+                        <div id="conflicts-list" class="conflicts-list"></div>
+                    </div>
+                </div>
+
                 <div class="results-grid">
                     <!-- Generated SQL -->
                     <div class="glass-panel code-panel">
