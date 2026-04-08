@@ -136,10 +136,38 @@ The system now catches architectural conflicts before generating schemas, blocki
   - Styled with glassmorphic design matching existing UI aesthetic (red borders for hard blocks, gold for tradeoffs)
   - Shows decision conflicts with reasoning and resolution guidance
   - Dismissible panel with icon-based category indicators
-- [x] **Production-readiness preparation.**
-  - **Security & Input Validation**: Rate limiting (30 req/min), input sanitization, XSS protection, CORS restrictions, request validation with Pydantic
-  - **Error Handling**: Custom exception handlers, fallback behaviors, graceful degradation, circuit breakers for external services
-  - **Monitoring & Logging**: Structured logging with request IDs, unique request tracking, response timing, health check endpoint
-  - **Deployment Documentation**: Comprehensive DEPLOYMENT.md with Docker, Systemd, Gunicorn configs, environment setup, monitoring checklist
-  - **Code Infrastructure**: error_handlers.py, middleware.py for clean separation of concerns
-  - **API Enhancement**: Security headers, GZIP compression, rate limiter integration, request/response tracking
+## Decision Confirmation Flow (2026-04-08)
+**Status: ✅ COMPLETE (Backend + Frontend)**
+
+### 1. Two-Step Pipeline Flow
+- **Post-Extraction Halt**: The pipeline pauses after Stage 1 (Extraction) to allow user review.
+- **Session Store**: Added `_pending_decisions` in `api.py` to track state between extraction and confirmation.
+- **New Endpoints**:
+  - `POST /schema`: Returns `pending_decisions` when decisions are critical or confidence < 0.85.
+  - `POST /schema/confirm`: Accepts user overrides and finalizes the DDL generation.
+- **Verified end-to-end**: Extract → 2 pending decisions → Confirm → DDL generated with correct patterns.
+
+### 2. Bug Fixes Applied
+- **Class ordering**: Moved `PendingDecision` definition above `SchemaResponse` in `api.py` (was crashing on import).
+- **`'str' has no attribute 'get'`**: Pipeline was returning flat `{name: "choice"}` but `build_pending_decisions` expected `{name: {choice, confidence, source}}`. Fixed by returning full metadata dicts.
+- **Override filter**: Removed restrictive filter that only allowed overrides for LLM-extracted decisions. Now all 6 decisions can be overridden.
+- **`apply_all_patterns`**: Added `_get_choice()` helper to handle both dict and string values for backward compatibility.
+
+### 3. Frontend — Glassmorphic Confirmation Modal
+- Added `decision-panel` overlay with blur backdrop in `index.html`.
+- Radio buttons for each decision with recommended/alternative choices.
+- Custom radio styling with indigo glow, impact descriptions, confidence badges.
+- Confirm & Cancel buttons with full glassmorphic styling in `styles.css`.
+- `app.js` implements `showDecisionConfirmation()` and wires up `/schema/confirm` POST.
+
+### 4. Production-Readiness (prior session)
+- **Security & Input Validation**: Rate limiting (30 req/min), input sanitization, XSS protection.
+- **Error Handling**: Custom exception handlers, circuit breakers for LLM/Neo4j/Postgres.
+- **Monitoring & Logging**: Structured logging with request IDs, response timing.
+- **Deployment**: Comprehensive `DEPLOYMENT.md` with Docker, Systemd, Gunicorn configs.
+
+---
+
+## Next Steps
+- [ ] Add `tenant_id` column injection in `apply_all_patterns` for multi-tenant decisions.
+- [ ] Final production-readiness review and deployment verification.

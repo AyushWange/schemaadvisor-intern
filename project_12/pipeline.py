@@ -103,10 +103,14 @@ def apply_all_patterns(tables, active_decisions=None):
         active_decisions = {}
 
     # Determine which patterns to apply
-    do_audit      = active_decisions.get("audit_policy",      "full_audit")  != "no_audit"
-    do_soft_del   = active_decisions.get("delete_strategy",   "soft_delete") == "soft_delete"
-    do_temporal   = active_decisions.get("temporal_strategy", "current_only") == "versioned"
-    do_multi_tent = active_decisions.get("tenancy_model",     "single_tenant") == "multi_tenant"
+    def _get_choice(name, default):
+        val = active_decisions.get(name, default)
+        return val.get("choice", default) if isinstance(val, dict) else val
+
+    do_audit      = _get_choice("audit_policy",      "full_audit")  != "no_audit"
+    do_soft_del   = _get_choice("delete_strategy",   "soft_delete") == "soft_delete"
+    do_temporal   = _get_choice("temporal_strategy", "current_only") == "versioned"
+    do_multi_tent = _get_choice("tenancy_model",     "single_tenant") == "multi_tenant"
 
     enriched = []
     for table in tables:
@@ -337,19 +341,19 @@ def run_pipeline(requirements: str, verbose: bool = True, user_overrides: dict =
 
     # build_active_decisions applies defaults + critical halt gate
     active_map   = build_active_decisions(overrides)
-    # Flatten to {decision_name: choice} for downstream stages (non-halted only)
+    # Return full metadata to allow the API to check confidence/source
     active_decisions = {
-        k: v["choice"]
-        for k, v in active_map.items()
+        k: v for k, v in active_map.items()
         if v.get("source") != "halted"
     }
 
     if verbose:
         if active_decisions:
             for k, v in active_decisions.items():
-                src = active_map[k].get("source", "")
+                src = v.get("source", "") if isinstance(v, dict) else ""
+                choice = v.get("choice", v) if isinstance(v, dict) else v
                 if src != "default":
-                    print(f"    Active decision: {k}={v} ({src})")
+                    print(f"    Active decision: {k}={choice} ({src})")
         else:
             print("    No non-default decisions detected — using all defaults")
 
@@ -467,6 +471,7 @@ def run_pipeline(requirements: str, verbose: bool = True, user_overrides: dict =
             }
             for t in enriched
         ],
+        "active_decisions": active_decisions,
         "validation": report,
     }
 

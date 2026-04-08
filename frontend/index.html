@@ -117,6 +117,29 @@
         <!-- ── RESULTS SECTION ───────────────────────────────────── -->
         <section id="results-section" class="results-section hidden">
 
+            <!-- ── Decision Confirmation Panel ──────────────────── -->
+            <div id="decision-panel" class="decision-panel hidden">
+                <div class="glass-panel decision-container">
+                    <div class="panel-header">
+                        <h2>🎯 Design Confirmation</h2>
+                        <span class="badge badge-info">Architectural Review</span>
+                    </div>
+                    <p class="decision-intro">
+                        Before generating your schema, please confirm the following design decisions the AI has recommended based on your requirements.
+                    </p>
+                    <div id="decisions-list" class="decisions-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="decision-actions">
+                        <button id="cancel-decisions-btn" class="icon-btn">Cancel</button>
+                        <button id="confirm-decisions-btn" class="primary-btn">
+                            <span class="btn-icon">✓</span>
+                            <span class="btn-text">Confirm & Generate Schema</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tab bar -->
             <div class="tab-bar">
                 <button class="tab-btn active" id="tab-schema" data-tab="schema">

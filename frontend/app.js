@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reqText) return;
 
         generateBtn.disabled = true;
-        btnText.textContent  = 'Generating…';
+        btnText.textContent  = 'Extracting…';
         btnIcon.textContent  = '';
         btnLoader.classList.remove('hidden');
         errorMsg.classList.add('hidden');
@@ -341,11 +341,12 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingDecisions.forEach((decision, idx) => {
             const container = document.createElement('div');
             container.className = 'decision-card';
+            container.dataset.decision = decision.decision_name;
             
             const title = document.createElement('div');
             title.className = 'decision-title';
             title.innerHTML = `
-                <strong>${decision.decision_name}</strong>
+                <strong class="decision-name-label">${decision.decision_name}</strong>
                 <span class="decision-confidence">${(decision.confidence * 100).toFixed(0)}% confidence</span>
             `;
             
@@ -354,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reasoning.textContent = decision.reasoning;
             
             const impact = document.createElement('div');
-            reasoning.className = 'decision-impact';
+            impact.className = 'decision-impact';
             impact.textContent = `Adds: ${decision.impact}`;
             
             const choices = document.createElement('div');
@@ -365,8 +366,10 @@ document.addEventListener('DOMContentLoaded', () => {
             chosenLabel.className = 'decision-choice-label';
             chosenLabel.innerHTML = `
                 <input type="radio" name="decision_${idx}" value="${decision.recommended_choice}" checked>
-                <span class="choice-name">${decision.recommended_choice}</span>
-                <span class="choice-label">(Recommended)</span>
+                <div class="choice-text">
+                    <span class="choice-name">${decision.recommended_choice}</span>
+                    <span class="choice-label">(Recommended)</span>
+                </div>
             `;
             choices.appendChild(chosenLabel);
             
@@ -376,7 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 altLabel.className = 'decision-choice-label';
                 altLabel.innerHTML = `
                     <input type="radio" name="decision_${idx}" value="${alt}">
-                    <span class="choice-name">${alt}</span>
+                    <div class="choice-text">
+                        <span class="choice-name">${alt}</span>
+                    </div>
                 `;
                 choices.appendChild(altLabel);
             });
@@ -396,16 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmBtn?.addEventListener('click', async () => {
         if (!currentRequestId || !currentRequirements) return;
         
-        // Collect user's decision choices
         const decisionOverrides = [];
-        const decisionElements = document.querySelectorAll('.decision-card');
-        decisionElements.forEach((el, idx) => {
+        const decisionContainers = decisionsList.querySelectorAll('.decision-card');
+        decisionContainers.forEach((el, idx) => {
             const selected = el.querySelector(`input[name="decision_${idx}"]:checked`);
             if (selected) {
                 decisionOverrides.push({
-                    decision_name: selected.parentElement.parentElement.querySelector('strong').textContent,
+                    decision_name: el.dataset.decision,
                     chosen_choice: selected.value,
-                    confidence: 0.95  // User explicitly confirmed
+                    confidence: 0.95
                 });
             }
         });
