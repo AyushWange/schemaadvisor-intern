@@ -1,0 +1,16 @@
+{
+    "scenario_id": 8,
+    "description": "Project Tracking",
+    "expected_tables": [
+        "projects",
+        "tasks",
+        "milestones",
+        "employees",
+        "time_logs"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

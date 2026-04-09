@@ -18,27 +18,56 @@ CONCEPTS = {
     "e_commerce_orders": {
         "description": "Shopping cart, checkout, order lifecycle, order items",
         "aliases":     ["orders", "shopping cart", "checkout",
-                        "e-commerce", "online store"],
+                        "e-commerce", "online store", "buy", "purchase"],
+    },
+    "payment_processing": {
+        "description": "Payments, payment methods, refunds, reconciliation",
+        "aliases":     ["payments", "billing", "refunds", "transactions", "stripe"],
+    },
+    "invoicing": {
+        "description": "Sales invoices, invoice items, tax line entries",
+        "aliases":     ["invoicing", "invoices", "bills", "receipts", "accounts receivable"],
     },
     "inventory_management": {
         "description": "Warehouses, stock entries, stock ledger, reorder levels",
-        "aliases":     ["inventory", "stock", "warehouse",
-                        "stock management"],
+        "aliases":     ["inventory", "stock", "warehouse", "stock management"],
     },
     "customer_management": {
         "description": "Customer records, addresses, groups, contacts",
-        "aliases":     ["customers", "CRM", "contacts",
-                        "client management"],
+        "aliases":     ["customers", "CRM", "contacts", "client management"],
+    },
+    "gst_compliance": {
+        "description": "Indian GST tax categories, HSN codes, tax entries",
+        "aliases":     ["GST", "HSN", "Indian tax", "tax compliance", "India"],
     },
     "employee_management": {
         "description": "Employee records, departments, designations",
-        "aliases":     ["employees", "HR", "human resources",
-                        "staff", "workforce"],
+        "aliases":     ["employees", "HR", "human resources", "staff", "workforce", "payroll"],
     },
     "project_tracking": {
         "description": "Projects, tasks, time logs, milestones",
-        "aliases":     ["projects", "tasks", "time tracking",
-                        "sprints", "milestones"],
+        "aliases":     ["projects", "tasks", "time tracking", "sprints", "milestones", "agile"],
+    },
+    # ── 5 new concepts (spec §4.1.1) ──────────────────────────────────────────
+    "supplier_management": {
+        "description": "Supplier records, groups, payment terms, purchase orders",
+        "aliases":     ["suppliers", "vendors", "procurement", "sourcing", "purchase orders"],
+    },
+    "multi_currency": {
+        "description": "Currency definitions, exchange rates, conversions",
+        "aliases":     ["currency", "forex", "exchange rates", "multi-currency", "foreign currency"],
+    },
+    "file_attachments": {
+        "description": "File upload records, storage references, metadata",
+        "aliases":     ["files", "attachments", "uploads", "documents", "storage", "S3"],
+    },
+    "notifications": {
+        "description": "Notification records, delivery channels, read status",
+        "aliases":     ["notifications", "alerts", "push notifications", "email alerts", "inbox"],
+    },
+    "reporting_analytics": {
+        "description": "Aggregate tables, dashboard data sources, metrics",
+        "aliases":     ["reports", "dashboards", "analytics", "metrics", "KPIs", "charts"],
     },
 }
 

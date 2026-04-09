@@ -3,30 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchemaAdvisor AI</title>
+    <title>SchemaAdvisor AI — Natural Language to PostgreSQL</title>
+    <meta name="description" content="SchemaAdvisor converts natural language business requirements into validated PostgreSQL database schemas with AI-powered explainability and interactive dependency graphs.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Prism.js SQL Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Animated background orbs -->
     <div class="background-orbs">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
     </div>
 
-    <main class="container">
-        <header class="header">
-            <h1 class="gradient-text">SchemaAdvisor</h1>
-            <p class="subtitle">Natural Language to Validated PostgreSQL Schema</p>
-        </header>
+    <!-- Grid overlay -->
+    <div class="grid-overlay"></div>
 
-        <section class="glass-panel input-section">
-            <label for="prompt-input" class="visually-hidden">Describe your database requirements</label>
-            <textarea id="prompt-input" placeholder="e.g., I need an online store with product catalog, shopping cart, and invoicing..." rows="3"></textarea>
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <a href="/" class="nav-brand" id="nav-brand-link">
+            <span class="nav-brand-icon">⚡</span>
+            <span>SchemaAdvisor</span>
+        </a>
+        <div class="nav-center">
+            <span class="nav-version-badge">v2.7.0</span>
+        </div>
+        <div class="nav-right">
+            <span id="health-dot" class="health-dot" title="Checking status..."></span>
+            <a href="/admin.html" class="nav-link" id="admin-nav-link">🛠 Admin</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- ── WELCOME HERO ──────────────────────────────────────── -->
+        <section id="welcome-section" class="welcome-section">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                AI-Powered · Knowledge Graph · PostgreSQL
+            </div>
+            <h1 class="gradient-text hero-title">
+                Schema<span class="accent-text">Advisor</span>
+            </h1>
+            <p class="hero-subtitle">
+                Describe your business requirements in plain English.<br>
+                Get a validated, production-ready PostgreSQL schema in seconds.
+            </p>
+
+            <div class="hero-features">
+                <div class="feature-pill">
+                    <span class="feature-pill-icon">🧠</span>
+                    <span>LLM Concept Extraction</span>
+                </div>
+                <div class="feature-pill">
+                    <span class="feature-pill-icon">🕸️</span>
+                    <span>Neo4j Knowledge Graph</span>
+                </div>
+                <div class="feature-pill">
+                    <span class="feature-pill-icon">📊</span>
+                    <span>Dependency Visualizer</span>
+                </div>
+                <div class="feature-pill">
+                    <span class="feature-pill-icon">✅</span>
+                    <span>Live Validation</span>
+                </div>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Domain Concepts</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">Pipeline Stages</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">FK Validated</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── INPUT SECTION ─────────────────────────────────────── -->
+        <section class="glass-panel input-section" id="input-section">
+            <div class="input-label-row">
+                <label for="prompt-input" class="input-label">💬 Describe your requirements</label>
+                <div class="example-chips">
+                    <button class="example-chip" id="example-ecommerce">e-commerce</button>
+                    <button class="example-chip" id="example-hrm">HR system</button>
+                    <button class="example-chip" id="example-saas">SaaS multi-tenant</button>
+                </div>
+            </div>
+            <textarea id="prompt-input" placeholder="e.g., I need an online store with product catalog, shopping cart, order management, invoicing and GST compliance..." rows="3"></textarea>
             <div class="action-bar">
+                <span id="char-count" class="char-count">0 chars</span>
                 <button id="generate-btn" class="primary-btn">
+                    <span class="btn-icon">✦</span>
                     <span class="btn-text">Generate Schema</span>
                     <span class="btn-loader hidden"></span>
                 </button>
@@ -34,50 +114,208 @@
             <div id="error-message" class="error-msg hidden"></div>
         </section>
 
+        <!-- ── RESULTS SECTION ───────────────────────────────────── -->
         <section id="results-section" class="results-section hidden">
-            <div class="results-grid">
-                <!-- Generated SQL -->
-                <div class="glass-panel code-panel">
+
+            <!-- ── Decision Confirmation Panel ──────────────────── -->
+            <div id="decision-panel" class="decision-panel hidden">
+                <div class="glass-panel decision-container">
                     <div class="panel-header">
-                        <h2>Generated PostgreSQL</h2>
-                        <span id="validation-badge" class="badge">Validating...</span>
+                        <h2>🎯 Design Confirmation</h2>
+                        <span class="badge badge-info">Architectural Review</span>
                     </div>
-                    <div class="code-wrapper">
-                        <pre><code id="sql-output" class="language-sql"></code></pre>
+                    <p class="decision-intro">
+                        Before generating your schema, please confirm the following design decisions the AI has recommended based on your requirements.
+                    </p>
+                    <div id="decisions-list" class="decisions-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="decision-actions">
+                        <button id="cancel-decisions-btn" class="icon-btn">Cancel</button>
+                        <button id="confirm-decisions-btn" class="primary-btn">
+                            <span class="btn-icon">✓</span>
+                            <span class="btn-text">Confirm & Generate Schema</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab bar -->
+            <div class="tab-bar">
+                <button class="tab-btn active" id="tab-schema" data-tab="schema">
+                    <span>📋</span> Schema
+                </button>
+                <button class="tab-btn" id="tab-graph" data-tab="graph">
+                    <span>🕸️</span> Dependency Graph
+                </button>
+                <button class="tab-btn" id="tab-explain" data-tab="explain">
+                    <span>🧠</span> Explainability
+                </button>
+                <button class="tab-btn" id="tab-json" data-tab="json">
+                    <span>{ }</span> Raw JSON
+                </button>
+            </div>
+
+            <!-- ── Decision Confirmation Panel ──────────────────── -->
+            <div id="decision-panel" class="decision-panel hidden">
+                <div class="glass-panel decision-container">
+                    <div class="panel-header">
+                        <h2>Review Design Decisions</h2>
+                        <p class="panel-subtitle">Confirm the design decisions before generating your schema</p>
+                    </div>
+                    <div id="decisions-list" class="decisions-list"></div>
+                    <div class="button-group">
+                        <button id="confirm-decisions-btn" class="btn-primary">✓ Confirm & Generate</button>
+                        <button id="cancel-decisions-btn" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Tab: Schema ──────────────────────────────────── -->
+            <div id="tab-content-schema" class="tab-content active">
+                <!-- Conflicts & Warnings Panel -->
+                <div id="conflicts-panel" class="conflicts-panel hidden">
+                    <div class="glass-panel conflicts-container">
+                        <div class="panel-header">
+                            <h2 id="conflicts-title">⚠️ Design Conflicts & Trade-offs</h2>
+                            <button id="conflicts-close" class="icon-btn" title="Dismiss">✕</button>
+                        </div>
+                        <div id="conflicts-list" class="conflicts-list"></div>
                     </div>
                 </div>
 
-                <!-- Explainability Report -->
-                <div class="glass-panel report-panel">
+                <div class="results-grid">
+                    <!-- Generated SQL -->
+                    <div class="glass-panel code-panel">
+                        <div class="panel-header">
+                            <h2>Generated PostgreSQL</h2>
+                            <div class="panel-header-right">
+                                <button id="copy-sql-btn" class="icon-btn copy-btn" title="Copy SQL to clipboard">
+                                    <span class="copy-icon">⎘</span>
+                                    <span class="copy-text">Copy</span>
+                                </button>
+                                <span id="validation-badge" class="badge">Validating…</span>
+                            </div>
+                        </div>
+                        <div class="code-wrapper">
+                            <pre><code id="sql-output" class="language-sql"></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Meta -->
+                    <div class="glass-panel meta-panel">
+                        <div class="panel-header">
+                            <h2>Pipeline Metadata</h2>
+                            <span class="badge badge-info">Run Info</span>
+                        </div>
+                        <div class="meta-body">
+                            <div class="meta-row">
+                                <span class="meta-key">Creation Order</span>
+                                <span id="creation-order-val" class="meta-val mono-text"></span>
+                            </div>
+                            <div class="meta-row" id="decisions-row" style="display:none">
+                                <span class="meta-key">Active Decisions</span>
+                                <span id="decisions-val" class="meta-val"></span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-key">Tables Generated</span>
+                                <span id="table-count-val" class="meta-val"></span>
+                            </div>
+                        </div>
+
+                        <!-- Table Summary cards -->
+                        <div id="table-summary-cards" class="table-summary-cards"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Tab: Dependency Graph ─────────────────────────── -->
+            <div id="tab-content-graph" class="tab-content hidden">
+                <div class="glass-panel graph-panel">
+                    <div class="panel-header">
+                        <h2>Interactive Dependency Graph</h2>
+                        <div class="panel-header-right">
+                            <button id="graph-zoom-in" class="icon-btn" title="Zoom in">＋</button>
+                            <button id="graph-zoom-out" class="icon-btn" title="Zoom out">－</button>
+                            <button id="graph-reset" class="icon-btn" title="Reset view">⟳</button>
+                            <div class="graph-legend">
+                                <span class="legend-dot required"></span><span>required</span>
+                                <span class="legend-dot recommended"></span><span>recommended</span>
+                                <span class="legend-dot suggested"></span><span>suggested</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="graph-hint">Drag nodes · Scroll to zoom · Click a node to highlight its connections</div>
+                    <div class="graph-container" id="graph-container">
+                        <canvas id="dep-graph-canvas"></canvas>
+                    </div>
+                    <div id="graph-tooltip" class="graph-tooltip hidden"></div>
+                </div>
+            </div>
+
+            <!-- ── Tab: Explainability ──────────────────────────── -->
+            <div id="tab-content-explain" class="tab-content hidden">
+                <div class="glass-panel explain-panel">
                     <div class="panel-header">
                         <h2>AI Explainability</h2>
                         <span class="badge badge-info">Concept Trace</span>
                     </div>
                     <div class="table-wrapper">
-                        <table class="explain-table">
+                        <table class="explain-table" id="explain-table">
                             <thead>
                                 <tr>
-                                    <th>Table Name</th>
+                                    <th>Table</th>
                                     <th>Tier</th>
                                     <th>Confidence</th>
                                     <th>Triggered By</th>
+                                    <th>Patterns</th>
                                 </tr>
                             </thead>
-                            <tbody id="explain-tbody">
-                                <!-- Rows injected by JS -->
-                            </tbody>
+                            <tbody id="explain-tbody"></tbody>
                         </table>
                     </div>
-                    
-                    <div class="pipeline-meta">
-                        <h3>Pipeline Meta</h3>
-                        <p><strong>Creation Order:</strong> <span id="creation-order-val"></span></p>
+                </div>
+            </div>
+
+            <!-- ── Tab: Raw JSON ─────────────────────────────────── -->
+            <div id="tab-content-json" class="tab-content hidden">
+                <div class="glass-panel json-panel">
+                    <div class="panel-header">
+                        <h2>Raw API Response</h2>
+                        <div class="panel-header-right">
+                            <button id="copy-json-btn" class="icon-btn copy-btn" title="Copy JSON">
+                                <span class="copy-icon">⎘</span>
+                                <span class="copy-text">Copy JSON</span>
+                            </button>
+                            <button id="expand-json-btn" class="icon-btn" title="Expand/Collapse all">⊞ Expand All</button>
+                        </div>
+                    </div>
+                    <div class="json-wrapper">
+                        <div id="json-tree" class="json-tree"></div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- ── Discovery Cards ───────────────────────────────────── -->
+        <section id="discovery-section" class="discovery-section hidden">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>🔍 Discovery Cards</h2>
+                    <span class="badge badge-warn">Unrecognised Requirements</span>
+                </div>
+                <p class="discovery-desc">
+                    The AI couldn't map the following to a known concept.
+                    These have been logged to Neo4j for taxonomy expansion.
+                </p>
+                <div id="discovery-cards" class="discovery-grid"></div>
+            </div>
+        </section>
+
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

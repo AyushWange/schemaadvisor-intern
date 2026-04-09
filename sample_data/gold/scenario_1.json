@@ -1,0 +1,16 @@
+{
+    "scenario_id": 1,
+    "description": "Simple E-commerce",
+    "expected_tables": [
+        "customers",
+        "orders",
+        "order_items",
+        "products",
+        "categories"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

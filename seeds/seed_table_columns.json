@@ -1,0 +1,1178 @@
+[
+  {
+    "logical_table": "attributes",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "product_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "key",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "value",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "tax_entries",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "invoice_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "tax_amount",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "payments",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "order_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "amount",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "status",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "employees",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "department_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "exchange_rates",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "currency_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "rate",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "effective_date",
+        "data_type": "DATE",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "products",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "price",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "customers",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "permissions",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "role_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "action",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "invoices",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "total",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "contacts",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "phone",
+        "data_type": "VARCHAR(20)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "stock_entries",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "warehouse_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "product_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "quantity",
+        "data_type": "INTEGER",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "reports",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "query",
+        "data_type": "TEXT",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "order_items",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "order_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "product_name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "quantity",
+        "data_type": "INTEGER",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "unit_price",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "designations",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "title",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "department_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "suppliers",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": true
+      },
+      {
+        "name": "payment_terms",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "purchase_orders",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "supplier_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "total",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "status",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false,
+        "default_value": "'draft'"
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "categories",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "currencies",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "code",
+        "data_type": "VARCHAR(3)",
+        "primary_key": false,
+        "nullable": false,
+        "unique": true
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "symbol",
+        "data_type": "VARCHAR(5)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "payment_methods",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "type",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "warehouses",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "location",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "dashboards",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "orders",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "total",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "status",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false,
+        "default_value": "'draft'"
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "refunds",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "payment_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "amount",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "roles",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "hsn_codes",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "code",
+        "data_type": "VARCHAR(20)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "description",
+        "data_type": "TEXT",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "currency_ledger",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "currency_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "amount",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "attachments",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "filename",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "file_url",
+        "data_type": "TEXT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "mime_type",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": true
+      },
+      {
+        "name": "size_bytes",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "supplier_groups",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "projects",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "milestones",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "project_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "due_date",
+        "data_type": "DATE",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "addresses",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "street",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "invoice_items",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "invoice_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "amount",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "time_logs",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "task_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "employee_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "hours",
+        "data_type": "DECIMAL(8,2)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "shopping_cart",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "customer_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "departments",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "stock_ledger",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "warehouse_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "product_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "balance",
+        "data_type": "DECIMAL(18,6)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "notifications",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "title",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "body",
+        "data_type": "TEXT",
+        "primary_key": false,
+        "nullable": true
+      },
+      {
+        "name": "is_read",
+        "data_type": "BOOLEAN",
+        "primary_key": false,
+        "nullable": false,
+        "default_value": "false"
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "storage_buckets",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "provider",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "sessions",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "user_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "token",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "expires_at",
+        "data_type": "TIMESTAMP",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "users",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "username",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "password_hash",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": true
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "gst_categories",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "rate",
+        "data_type": "DECIMAL(5,2)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "tasks",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "project_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "title",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "status",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "report_filters",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "report_id",
+        "data_type": "BIGINT",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "field_name",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  },
+  {
+    "logical_table": "notification_channels",
+    "curated_columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "type",
+        "data_type": "VARCHAR(50)",
+        "primary_key": false,
+        "nullable": false
+      }
+    ],
+    "column_sources": {},
+    "excluded_framework_columns": []
+  }
+]

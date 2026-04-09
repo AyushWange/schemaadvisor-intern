@@ -1,0 +1,16 @@
+{
+    "scenario_id": 7,
+    "description": "Multi-currency ERP",
+    "expected_tables": [
+        "currencies",
+        "exchange_rates",
+        "currency_ledger",
+        "customers",
+        "invoices"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

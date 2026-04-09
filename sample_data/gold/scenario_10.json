@@ -1,0 +1,15 @@
+{
+    "scenario_id": 10,
+    "description": "Reporting Dashboard",
+    "expected_tables": [
+        "reports",
+        "dashboards",
+        "report_filters",
+        "users"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

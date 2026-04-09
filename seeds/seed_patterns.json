@@ -1,0 +1,72 @@
+[
+  {
+    "name": "audit_columns",
+    "description": "Pattern audit_columns",
+    "application_columns": [
+      {
+        "name": "created_at",
+        "data_type": "TIMESTAMP",
+        "nullable": false,
+        "default_value": "NOW()"
+      },
+      {
+        "name": "updated_at",
+        "data_type": "TIMESTAMP",
+        "nullable": true
+      },
+      {
+        "name": "created_by",
+        "data_type": "VARCHAR(140)",
+        "nullable": true
+      },
+      {
+        "name": "updated_by",
+        "data_type": "VARCHAR(140)",
+        "nullable": true
+      }
+    ],
+    "introduces_fk": false
+  },
+  {
+    "name": "soft_delete",
+    "description": "Pattern soft_delete",
+    "application_columns": [
+      {
+        "name": "is_deleted",
+        "data_type": "BOOLEAN",
+        "nullable": false,
+        "default_value": "false"
+      },
+      {
+        "name": "deleted_at",
+        "data_type": "TIMESTAMP",
+        "nullable": true
+      }
+    ],
+    "introduces_fk": false
+  },
+  {
+    "name": "temporal_version",
+    "description": "Pattern temporal_version",
+    "application_columns": [
+      {
+        "name": "valid_from",
+        "data_type": "TIMESTAMP",
+        "nullable": false,
+        "default_value": "NOW()"
+      },
+      {
+        "name": "valid_to",
+        "data_type": "TIMESTAMP",
+        "nullable": true
+      },
+      {
+        "name": "version",
+        "data_type": "INTEGER",
+        "nullable": false,
+        "default_value": "1"
+      }
+    ],
+    "introduces_fk": false
+  }
+]

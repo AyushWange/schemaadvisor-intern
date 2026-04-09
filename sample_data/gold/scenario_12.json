@@ -1,0 +1,14 @@
+{
+    "scenario_id": 12,
+    "description": "Notifications Platform",
+    "expected_tables": [
+        "notifications",
+        "notification_channels",
+        "users"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

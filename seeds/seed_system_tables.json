@@ -1,0 +1,40 @@
+[
+  {
+    "logical_table": "tenants",
+    "columns": [
+      {
+        "name": "id",
+        "data_type": "BIGSERIAL",
+        "primary_key": true,
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "data_type": "VARCHAR(255)",
+        "primary_key": false,
+        "nullable": false
+      },
+      {
+        "name": "slug",
+        "data_type": "VARCHAR(100)",
+        "primary_key": false,
+        "nullable": false,
+        "unique": true
+      },
+      {
+        "name": "is_active",
+        "data_type": "BOOLEAN",
+        "primary_key": false,
+        "nullable": false,
+        "default_value": "true"
+      },
+      {
+        "name": "created_at",
+        "data_type": "TIMESTAMP",
+        "primary_key": false,
+        "nullable": false,
+        "default_value": "NOW()"
+      }
+    ]
+  }
+]

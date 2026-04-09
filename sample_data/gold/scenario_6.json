@@ -1,0 +1,14 @@
+{
+    "scenario_id": 6,
+    "description": "Supplier Management",
+    "expected_tables": [
+        "suppliers",
+        "purchase_orders",
+        "supplier_groups"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

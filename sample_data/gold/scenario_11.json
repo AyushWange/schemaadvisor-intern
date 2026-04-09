@@ -1,0 +1,14 @@
+{
+    "scenario_id": 11,
+    "description": "File Attachment System",
+    "expected_tables": [
+        "storage_buckets",
+        "attachments",
+        "users"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

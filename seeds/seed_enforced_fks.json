@@ -1,0 +1,218 @@
+[
+  {
+    "from_table": "orders",
+    "from_column": "customer_id",
+    "to_table": "customers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "order_items",
+    "from_column": "order_id",
+    "to_table": "orders",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "addresses",
+    "from_column": "customer_id",
+    "to_table": "customers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "contacts",
+    "from_column": "customer_id",
+    "to_table": "customers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "shopping_cart",
+    "from_column": "customer_id",
+    "to_table": "customers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "invoices",
+    "from_column": "customer_id",
+    "to_table": "customers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "invoice_items",
+    "from_column": "invoice_id",
+    "to_table": "invoices",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "tax_entries",
+    "from_column": "invoice_id",
+    "to_table": "invoices",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "attributes",
+    "from_column": "product_id",
+    "to_table": "products",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "sessions",
+    "from_column": "user_id",
+    "to_table": "users",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "permissions",
+    "from_column": "role_id",
+    "to_table": "roles",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "payments",
+    "from_column": "order_id",
+    "to_table": "orders",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "refunds",
+    "from_column": "payment_id",
+    "to_table": "payments",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "employees",
+    "from_column": "department_id",
+    "to_table": "departments",
+    "to_column": "id",
+    "on_delete": "SET NULL",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "designations",
+    "from_column": "department_id",
+    "to_table": "departments",
+    "to_column": "id",
+    "on_delete": "SET NULL",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "tasks",
+    "from_column": "project_id",
+    "to_table": "projects",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "time_logs",
+    "from_column": "task_id",
+    "to_table": "tasks",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "time_logs",
+    "from_column": "employee_id",
+    "to_table": "employees",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "milestones",
+    "from_column": "project_id",
+    "to_table": "projects",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "stock_entries",
+    "from_column": "warehouse_id",
+    "to_table": "warehouses",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "stock_entries",
+    "from_column": "product_id",
+    "to_table": "products",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "stock_ledger",
+    "from_column": "warehouse_id",
+    "to_table": "warehouses",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "stock_ledger",
+    "from_column": "product_id",
+    "to_table": "products",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "purchase_orders",
+    "from_column": "supplier_id",
+    "to_table": "suppliers",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "exchange_rates",
+    "from_column": "currency_id",
+    "to_table": "currencies",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "currency_ledger",
+    "from_column": "currency_id",
+    "to_table": "currencies",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  },
+  {
+    "from_table": "report_filters",
+    "from_column": "report_id",
+    "to_table": "reports",
+    "to_column": "id",
+    "on_delete": "CASCADE",
+    "ref_type": "enforced"
+  }
+]

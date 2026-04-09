@@ -1,0 +1,32 @@
+[
+  {
+    "from": "e_commerce_orders",
+    "to": "customer_management",
+    "reason": "Requirement dependency"
+  },
+  {
+    "from": "e_commerce_orders",
+    "to": "product_catalog",
+    "reason": "Requirement dependency"
+  },
+  {
+    "from": "invoicing",
+    "to": "customer_management",
+    "reason": "Requirement dependency"
+  },
+  {
+    "from": "payment_processing",
+    "to": "e_commerce_orders",
+    "reason": "Requirement dependency"
+  },
+  {
+    "from": "inventory_management",
+    "to": "product_catalog",
+    "reason": "Requirement dependency"
+  },
+  {
+    "from": "gst_compliance",
+    "to": "invoicing",
+    "reason": "Requirement dependency"
+  }
+]

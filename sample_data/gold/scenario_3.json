@@ -1,0 +1,14 @@
+{
+    "scenario_id": 3,
+    "description": "HR and Payroll",
+    "expected_tables": [
+        "employees",
+        "departments",
+        "designations"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

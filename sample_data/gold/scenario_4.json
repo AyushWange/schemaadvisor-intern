@@ -1,0 +1,16 @@
+{
+    "scenario_id": 4,
+    "description": "Multi-tenant SaaS",
+    "expected_tables": [
+        "tenants",
+        "users",
+        "roles",
+        "permissions",
+        "sessions"
+    ],
+    "expected_patterns": [
+        "audit_columns",
+        "soft_delete",
+        "temporal_version"
+    ]
+}

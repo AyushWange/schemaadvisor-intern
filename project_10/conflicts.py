@@ -16,9 +16,14 @@ DECISIONS = {
         "alternatives": ["multi_tenant"],
         "critical":     True
     },
+    "audit_policy": {
+        "default":      "full_audit",
+        "alternatives": ["no_audit"],
+        "critical":     False
+    },
     "hierarchy_approach": {
         "default":      "adjacency_list",
-        "alternatives": ["nested_set"],
+        "alternatives": ["nested_set", "closure_table"],
         "critical":     False
     },
     "temporal_strategy": {
@@ -55,6 +60,24 @@ CONFLICTS = [
         "category":   "hard_incompatibility",
         "reason":     "Nested set lft/rgt must be scoped per tenant — very complex.",
         "resolution": "Recommend adjacency_list. Require explicit confirmation.",
+    },
+    {
+        "decision_a": "audit_policy",
+        "choice_a":   "no_audit",
+        "decision_b": "delete_strategy",
+        "choice_b":   "hard_delete",
+        "category":   "preference_tradeoff",
+        "reason":     "No audit + hard_delete: deleted records leave no trace whatsoever.",
+        "resolution": "Strongly recommend at least soft_delete or full_audit for data safety.",
+    },
+    {
+        "decision_a": "temporal_strategy",
+        "choice_a":   "versioned",
+        "decision_b": "audit_policy",
+        "choice_b":   "no_audit",
+        "category":   "preference_tradeoff",
+        "reason":     "Versioned records with no audit trail loses who made the version.",
+        "resolution": "Enable full_audit to capture created_by/updated_by on versioned rows.",
     },
 ]
 
