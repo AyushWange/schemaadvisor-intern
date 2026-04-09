@@ -27,6 +27,7 @@ from project_12.pipeline import run_pipeline
 from project_06.extractor import CONCEPTS as _BASE_CONCEPTS
 from project_02.graph_loader    import load_full_graph
 from project_02.candidate_logger import log_candidates, get_all_candidates
+from project_02.cache_manager import cache_manager
 
 # Import error handlers and middleware
 from error_handlers import register_exception_handlers
@@ -97,6 +98,50 @@ app.add_middleware(
 
 # Register exception handlers
 register_exception_handlers(app)
+
+# ── Prometheus Metrics ─────────────────────────────────────────────────────────
+try:
+    from prometheus_fastapi_instrumentator import Instrumentator
+    from prometheus_client import Counter, Histogram, REGISTRY
+
+    # Auto-instrument all HTTP requests/responses
+    _prom = Instrumentator(
+        should_group_status_codes=False,
+        should_ignore_untemplated=True,
+    ).instrument(app).expose(app, endpoint="/metrics")
+
+    # Custom application-level metrics
+    SCHEMA_GEN_COUNTER = Counter(
+        "schema_advisor_requests_total",
+        "Total schema generation requests",
+        ["status"]  # success | error | timeout | pending
+    )
+    CACHE_HIT_COUNTER = Counter(
+        "schema_advisor_cache_hits_total",
+        "Neo4j query cache hits/misses",
+        ["result"]  # hit | miss
+    )
+    PIPELINE_DURATION = Histogram(
+        "schema_advisor_pipeline_duration_seconds",
+        "Pipeline execution duration in seconds",
+        buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0, 60.0]
+    )
+    CONFLICTS_COUNTER = Counter(
+        "schema_advisor_conflicts_total",
+        "Schema conflicts detected",
+        ["category"]  # hard_incompatibility | preference_tradeoff
+    )
+    logger.info("Prometheus metrics initialized at /metrics")
+    _PROMETHEUS_ENABLED = True
+except ImportError:
+    logger.warning("prometheus-fastapi-instrumentator not installed — metrics disabled")
+    _PROMETHEUS_ENABLED = False
+    # Stub objects so the rest of the code works without try/except everywhere
+    class _Stub:
+        def labels(self, **kwargs): return self
+        def inc(self, *a): pass
+        def observe(self, *a): pass
+    SCHEMA_GEN_COUNTER = CACHE_HIT_COUNTER = CONFLICTS_COUNTER = PIPELINE_DURATION = _Stub()
 
 # ── In-memory admin stores (seeded from extractor at startup) ──────────────────
 _concept_registry: dict[str, str] = copy.deepcopy(_BASE_CONCEPTS)
@@ -294,6 +339,7 @@ def root():
 def health():
     """Health check endpoint for monitoring and load balancers"""
     uptime_seconds = (datetime.now() - _startup_time).total_seconds()
+    cache_stats = cache_manager.stats()
     return {
         "status":       "ok",
         "version":      "2.8.0",
@@ -301,7 +347,14 @@ def health():
         "uptime_seconds": uptime_seconds,
         "llm_ready":    bool(os.environ.get("ANTHROPIC_API_KEY")),
         "neo4j_ready":  _neo4j_ready,
+        "cache":        cache_stats,
+        "metrics_enabled": _PROMETHEUS_ENABLED,
     }
+
+@app.get("/cache/stats")
+def cache_stats_endpoint():
+    """Live cache statistics: hits, misses, backend type, current size."""
+    return cache_manager.stats()
 
 @app.post("/schema", response_model=SchemaResponse)
 @limiter.limit("30/minute")
@@ -415,14 +468,24 @@ async def generate_schema(request: Request, req: SchemaRequest):
 
         elapsed = time.time() - start_time
         logger.info(f"[{request_id}] Schema generated in {elapsed:.2f}s with {len(result.get('tables', []))} tables")
+
+        # Update Prometheus metrics
+        SCHEMA_GEN_COUNTER.labels(status="success").inc()
+        PIPELINE_DURATION.observe(elapsed)
+        for conflict in result.get("conflicts", []):
+            CONFLICTS_COUNTER.labels(category=conflict.get("category", "unknown")).inc()
+
         return result
-    
+
     except HTTPException:
+        SCHEMA_GEN_COUNTER.labels(status="error").inc()
         raise
     except TimeoutError as e:
+        SCHEMA_GEN_COUNTER.labels(status="timeout").inc()
         logger.error(f"[{request_id}] Timeout: {str(e)}")
         raise HTTPException(status_code=504, detail="Schema generation timeout - request too complex")
     except Exception as e:
+        SCHEMA_GEN_COUNTER.labels(status="error").inc()
         logger.error(f"[{request_id}] Unexpected error: {type(e).__name__}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error - see logs for details")
 

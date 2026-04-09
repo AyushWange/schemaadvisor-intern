@@ -1,6 +1,10 @@
 import os
 import json
+import logging
 from neo4j import GraphDatabase
+from project_02.cache_manager import cache_manager, make_cache_key
+
+logger = logging.getLogger(__name__)
 
 URI  = os.environ.get("NEO4J_URI",      "bolt://localhost:7687")
 USER = os.environ.get("NEO4J_USER",     "neo4j")
@@ -33,19 +37,29 @@ def get_selected_tables(concept_names):
     """
     Returns dict: table_name -> {tier, triggered_by, inclusion_confidence}
     Uses Cypher to traverse dependencies and requires_table edges.
+    Results are cached for CACHE_TTL_SECONDS (default 1 hour).
     """
     if not _is_neo4j_available():
         raise Exception("Neo4j is required according to spec")
+
+    # ── Cache lookup ──────────────────────────────────────────────────────────
+    cache_key = make_cache_key("selected_tables", "|".join(sorted(concept_names)))
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        logger.info("Cache HIT for selected_tables key=%s", cache_key)
+        return cached
+
+    logger.info("Cache MISS for selected_tables — querying Neo4j")
 
     query = """
     MATCH (dc:DomainConcept)-[:DEPENDS_ON*0..]->(dep:DomainConcept)
     WHERE dc.name IN $concepts
     MATCH (dep)-[r:REQUIRES_TABLE]->(lt:LogicalTable)
-    RETURN lt.name AS table, 
+    RETURN lt.name AS table,
            max(CASE r.tier WHEN 'required' THEN 3 WHEN 'recommended' THEN 2 ELSE 1 END) AS max_tier,
            collect(DISTINCT dep.name) AS triggered_by
     """
-    
+
     driver = GraphDatabase.driver(URI, auth=(USER, PASS))
     results = {}
     with driver.session() as session:
@@ -54,19 +68,31 @@ def get_selected_tables(concept_names):
             tname = rec["table"]
             tier_val = rec["max_tier"]
             tier = "required" if tier_val == 3 else ("recommended" if tier_val == 2 else "suggested")
-            
             results[tname] = {
                 "name": tname,
                 "tier": tier,
                 "triggered_by": rec["triggered_by"]
             }
     driver.close()
+
+    # ── Cache store ───────────────────────────────────────────────────────────
+    cache_manager.set(cache_key, results)
     return results
 
 def get_enforced_fks(table_names):
     """
     Cypher: MATCH (a)-[r:REFERENCES {ref_type: 'enforced'}]->(b)
+    Results are cached for CACHE_TTL_SECONDS (default 1 hour).
     """
+    # ── Cache lookup ──────────────────────────────────────────────────────────
+    cache_key = make_cache_key("enforced_fks", "|".join(sorted(table_names)))
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        logger.info("Cache HIT for enforced_fks key=%s", cache_key)
+        return cached
+
+    logger.info("Cache MISS for enforced_fks — querying Neo4j")
+
     query = """
     MATCH (a:LogicalTable)-[r:REFERENCES {ref_type: 'enforced'}]->(b:LogicalTable)
     WHERE a.name IN $table_names AND b.name IN $table_names
@@ -85,6 +111,9 @@ def get_enforced_fks(table_names):
                 "on_delete": rec["on_delete"]
             })
     driver.close()
+
+    # ── Cache store ───────────────────────────────────────────────────────────
+    cache_manager.set(cache_key, fks)
     return fks
 
 def get_patterns_config():
