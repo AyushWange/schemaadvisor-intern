@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Mermaid for ER Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+    </script>
 </head>
 <body>
     <div class="background-orbs">
@@ -25,6 +30,26 @@
         <section class="glass-panel input-section">
             <label for="prompt-input" class="visually-hidden">Describe your database requirements</label>
             <textarea id="prompt-input" placeholder="e.g., I need an online store with product catalog, shopping cart, and invoicing..." rows="3"></textarea>
+            
+            <!-- Decision Presets -->
+            <div class="preset-buttons-container">
+                <label style="display: block; margin-bottom: 10px; color: #e0e7ff; font-weight: 600; font-size: 14px;">📋 Quick Presets:</label>
+                <div class="preset-buttons">
+                    <button type="button" onclick="applyPreset('ecommerce')" class="preset-btn" title="E-commerce: audit, versioned, soft delete">
+                        🛒 E-Commerce
+                    </button>
+                    <button type="button" onclick="applyPreset('saas')" class="preset-btn" title="SaaS: multi-tenant, audit, soft delete">
+                        ☁️ SaaS
+                    </button>
+                    <button type="button" onclick="applyPreset('analytics')" class="preset-btn" title="Analytics: denormalized, minimal overhead">
+                        📊 Analytics
+                    </button>
+                    <button type="button" onclick="applyPreset('lean')" class="preset-btn" title="Lean: minimal schema, maximum flexibility">
+                        ⚡ Lean
+                    </button>
+                </div>
+            </div>
+            
             <div class="action-bar">
                 <button id="generate-btn" class="primary-btn">
                     <span class="btn-text">Generate Schema</span>
@@ -36,12 +61,35 @@
 
         <section id="results-section" class="results-section hidden">
             <div class="results-grid">
+                <!-- ER Diagram -->
+                <div id="diagram-section" class="glass-panel diagram-panel" style="grid-column: 1 / -1; display: none;">
+                    <div class="panel-header">
+                        <h2>📊 Entity Relationship Diagram</h2>
+                        <span class="badge badge-info">Visual Schema</span>
+                    </div>
+                    <div id="er-diagram" class="mermaid"></div>
+                </div>
+
                 <!-- Generated SQL -->
                 <div class="glass-panel code-panel">
                     <div class="panel-header">
                         <h2>Generated PostgreSQL</h2>
                         <span id="validation-badge" class="badge">Validating...</span>
                     </div>
+                    
+                    <!-- SQL Export Toolbar -->
+                    <div class="sql-export-toolbar">
+                        <button onclick="copyToClipboard()" class="btn-export" title="Copy SQL to clipboard">
+                            📋 Copy SQL
+                        </button>
+                        <button onclick="downloadSQL()" class="btn-export" title="Download as .sql file">
+                            📥 Download SQL
+                        </button>
+                        <button onclick="downloadMigration()" class="btn-export" title="Download as migration script">
+                            🔄 Migration Script
+                        </button>
+                    </div>
+                    
                     <div class="code-wrapper">
                         <pre><code id="sql-output" class="language-sql"></code></pre>
                     </div>
