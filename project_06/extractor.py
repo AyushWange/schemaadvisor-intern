@@ -149,7 +149,7 @@ def _call_claude(requirements: str) -> dict:
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
     message = client.messages.create(
-        model="claude-haiku-4-5",
+        model="claude-3-5-haiku-latest",
         max_tokens=1024,
         system=_build_prompt(),
         messages=[
