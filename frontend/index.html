@@ -12,7 +12,7 @@
     <!-- Mermaid for ER Diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script>
-        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+        mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
     </script>
 </head>
 <body>
@@ -33,19 +33,19 @@
             
             <!-- Decision Presets -->
             <div class="preset-buttons-container">
-                <label style="display: block; margin-bottom: 10px; color: #e0e7ff; font-weight: 600; font-size: 14px;">📋 Quick Presets:</label>
+                <label style="display: block; margin-bottom: 10px; color: var(--text-secondary); font-weight: 600; font-size: 14px;">Quick Presets:</label>
                 <div class="preset-buttons">
                     <button type="button" onclick="applyPreset('ecommerce')" class="preset-btn" title="E-commerce: audit, versioned, soft delete">
-                        🛒 E-Commerce
+                        E-Commerce
                     </button>
                     <button type="button" onclick="applyPreset('saas')" class="preset-btn" title="SaaS: multi-tenant, audit, soft delete">
-                        ☁️ SaaS
+                        SaaS
                     </button>
                     <button type="button" onclick="applyPreset('analytics')" class="preset-btn" title="Analytics: denormalized, minimal overhead">
-                        📊 Analytics
+                        Analytics
                     </button>
                     <button type="button" onclick="applyPreset('lean')" class="preset-btn" title="Lean: minimal schema, maximum flexibility">
-                        ⚡ Lean
+                        Lean Startup
                     </button>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                 <!-- ER Diagram -->
                 <div id="diagram-section" class="glass-panel diagram-panel" style="grid-column: 1 / -1; display: none;">
                     <div class="panel-header">
-                        <h2>📊 Entity Relationship Diagram</h2>
-                        <span class="badge badge-info">Visual Schema</span>
+                        <h2>Entity Relationship Diagram</h2>
+                        <span class="badge badge-info">Visual</span>
                     </div>
                     <div id="er-diagram" class="mermaid"></div>
                 </div>
@@ -73,20 +73,20 @@
                 <!-- Generated SQL -->
                 <div class="glass-panel code-panel">
                     <div class="panel-header">
-                        <h2>Generated PostgreSQL</h2>
+                        <h2>PostgreSQL Schema</h2>
                         <span id="validation-badge" class="badge">Validating...</span>
                     </div>
                     
                     <!-- SQL Export Toolbar -->
                     <div class="sql-export-toolbar">
                         <button onclick="copyToClipboard()" class="btn-export" title="Copy SQL to clipboard">
-                            📋 Copy SQL
+                            Copy SQL
                         </button>
                         <button onclick="downloadSQL()" class="btn-export" title="Download as .sql file">
-                            📥 Download SQL
+                            Download
                         </button>
                         <button onclick="downloadMigration()" class="btn-export" title="Download as migration script">
-                            🔄 Migration Script
+                            Migration Script
                         </button>
                     </div>
                     
@@ -98,8 +98,8 @@
                 <!-- Explainability Report -->
                 <div class="glass-panel report-panel">
                     <div class="panel-header">
-                        <h2>AI Explainability</h2>
-                        <span class="badge badge-info">Concept Trace</span>
+                        <h2>Schema Analysis</h2>
+                        <span class="badge badge-info">Details</span>
                     </div>
                     <div class="table-wrapper">
                         <table class="explain-table">
